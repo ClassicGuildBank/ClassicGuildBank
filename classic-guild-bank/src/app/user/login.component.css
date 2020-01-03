@@ -1,0 +1,29 @@
+.splash-screen {
+    width: 100%
+}
+
+.splash-screen > img {
+    width: 100%;
+    margin-top: -100px;
+}
+
+.cgb-art-credits {
+    text-align: center;
+    font-size: 10px;
+    margin-bottom: -16px;
+    margin-top: 8px;
+}
+
+:host /deep/ .modal-backdrop {
+    background-color: rgba(0,0,0,.25);
+}
+
+@media screen and (max-width: 576px) {
+    .splash-screen {
+        display: none;
+    }   
+
+    .cgb-art-credits {
+        display: none;
+    } 
+}

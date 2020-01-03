@@ -1,0 +1,32 @@
+<div class="clr-row" style="width: 100%">
+    <div class="clr-col">
+        <clr-input-container class="name-filter">
+            <label>Item name</label>
+            <input #nameInput style="width: 100%" clrInput name="item" [formControl]="name" />
+        </clr-input-container>
+    </div>
+    <div class="clr-col-lg-2 clr-col-md-3 clr-col-12">
+        <clr-select-container *ngIf="showCategories">
+            <label>Category</label>
+            <select style="width: 100%" clrSelect name="category" placeholder="Category" [formControl]="category">
+                <option></option>
+                <option *ngFor="let cat of categories" [value]="cat.value">{{cat.name}}</option>
+            </select>
+        </clr-select-container>
+    </div>
+
+    <div class="clr-col-lg-2 clr-col-md-3 clr-col-12">
+        <clr-select-container *ngIf="subcategories">
+            <label>SubCategory</label>
+            <select style="width: 100%" clrSelect name="subcategory" [formControl]="subcategory">
+                <option></option>
+                <option *ngFor="let sub of subcategories" [value]="sub.value">{{sub.name}}</option>
+            </select>
+        </clr-select-container>
+    </div>
+    <div class="clr-col-lg-2 clr-col-md-3 clr-col-6">
+        <div style="display: flex; flex-direction: column-reverse; width: 100%; height: 100%">
+            <button class="btn btn-outline cgb-import-button" (click)="onClearFilter()">Clear</button>
+        </div>
+    </div>
+</div>

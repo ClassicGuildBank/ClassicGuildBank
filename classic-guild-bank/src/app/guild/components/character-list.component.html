@@ -1,0 +1,43 @@
+<div class="clr-row" style="justify-content: center">
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="card-header" style="display: flex; flex-direction:row">
+                <span style="flex: 1; align-self: center">{{character.name}}</span>
+                <cgb-money [money]="character"></cgb-money>
+            </div>
+            <div class="card-block" >
+                <cgb-list-filter [filterName]="character.name + 'Filter'" [data]="listData" (filtered)="onFiltered($event)"></cgb-list-filter>
+                <clr-datagrid style="width: 100%; padding-left: .25rem; padding-right: .25rem">
+                    <clr-dg-column style="width: 44px"></clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='nameComparator'>Name</clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='quantityComparator'>Quantity</clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='classComparator'>Category</clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='subclassComparator'>Subcategory</clr-dg-column>
+
+                    <clr-dg-placeholder>There are no items currently. Click 'Import From Addon' to import some items.</clr-dg-placeholder>
+
+                    <clr-dg-row *clrDgItems="let listItem of filteredData">
+                        <clr-dg-cell>
+                            <div style="display: flex; flex-direction: row; justify-content: center">
+                                <cgb-item [item]="listItem.item"></cgb-item>
+                            </div>
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.item.name}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.quantity}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.category}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.subcategory}}
+                        </clr-dg-cell>
+                    </clr-dg-row>            
+                </clr-datagrid>      
+                
+            </div>
+        </div>
+    </div>
+</div>

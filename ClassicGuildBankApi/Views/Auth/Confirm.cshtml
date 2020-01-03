@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewData["Title"] = "ConfirmView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model ClassicGuildBankApi.ViewModels.Auth.ConfirmViewModel
+
+<div class="main-container">
+
+    <div class="content-container">
+        <div class="content-area">
+
+            @if (Model.Success)
+            {
+                <div class="card">
+                    <div style="display:flex; flex-direction:column; justify-content: center; align-content: center; align-items: center; padding: 32px;">
+                        <clr-icon shape="users" size="54"></clr-icon>
+                        <h3>Your account has been confirmed!</h3>
+                        <h4>Click below to return to the login</h4>
+                    </div>
+                    <div class="card-footer" style="display:flex; flex-direction:row; justify-content: center; align-content: center; align-items: center;">
+                        <a type="button" class="btn btn-primary" href="@Model.ClientUrl">Login</a>
+                    </div>
+                </div>
+            }
+
+            @if (!Model.Success)
+            {
+                <div class="card">
+                    <div style="display:flex; flex-direction:column; justify-content: center; align-content: center; align-items: center; padding: 32px;">
+                        <clr-icon shape="users" size="54"></clr-icon>
+                        <h3>We were unable to confirm your account.</h3>
+                        <h4>Click below to resend the confirmation email</h4>
+                    </div>
+                    <div class="card-footer" style="display:flex; flex-direction:row; justify-content: center; align-content: center; align-items: center;">
+                        <button type="button" class="btn btn-primary" (click)="resend()">Resend Confirmation</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

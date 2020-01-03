@@ -1,0 +1,88 @@
+<cgb-guild-loading *ngIf="(guildsLoading$ | async) || (itemRequestsLoading$ | async)"></cgb-guild-loading>
+
+<div class="clr-row" style="justify-content: center" *ngIf="!(guildsLoading$ | async) && !(itemRequestsLoading$ | async)">
+
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="card-header">
+                Item Requests
+            </div>
+            <div class="card-block">
+                <div class="clr-row">
+                    <div class="clr-col-9">
+                    </div>
+                    <div class="clr-col-3">
+                        <clr-toggle-wrapper>
+                            <input type="checkbox" clrToggle value="showOpenRequestsOnly" name="showOpenRequestsOnlyToggle" [(ngModel)]="showOpenRequestsOnly" (change)="showOpenRequestsOnlyToggled()"/>
+                            <label>Show Open Requests Only</label>
+                        </clr-toggle-wrapper>
+                    </div>
+                </div>
+            </div>
+            <div class="card-block">
+
+                <clr-datagrid style="width: 100%;">
+                    <clr-dg-column [clrDgSortBy]='itemRequestCharacterNameComparator'>
+                        Character Name
+                    </clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='itemRequestDateComparator' style="width: 140px"> 
+                        Date Requested
+                    </clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='itemRequestGoldComparator' style="width: 130px">
+                        Requested Gold
+                    </clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='itemRequestStatusComparator' style="width: 80px">
+                        Status
+                    </clr-dg-column>
+
+                    <clr-dg-placeholder>There are no requests currently.</clr-dg-placeholder>
+        
+                    <clr-dg-row *clrDgItems="let itemRequest of filteredItemRequests">
+                        <clr-dg-cell>
+                            {{itemRequest.characterName}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{itemRequest.dateRequested | date:'short'}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            <cgb-money [money]="itemRequest"></cgb-money>
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            <span class="badge" [ngClass]="{'badge-info': (itemRequest.status == 'Pending'), 'badge-success': (itemRequest.status == 'Approved'), 'badge-danger': (itemRequest.status == 'Denied')}">{{itemRequest.status}}</span>
+                        </clr-dg-cell>
+
+                        <clr-dg-row-detail *clrIfExpanded>
+                            <div class="card-block" style="width: 100%; padding-top: 0px">
+                                
+                                <clr-datagrid>
+                                    <clr-dg-column style="width: 44px"></clr-dg-column>
+                                    <clr-dg-column [clrDgSortBy]='nameComparator'>Item Name</clr-dg-column>
+                                    <clr-dg-column [clrDgSortBy]='quantityComparator' style="width: 60px">Quantity</clr-dg-column>
+                                    <clr-dg-placeholder>No Items Have Been Requested</clr-dg-placeholder>
+                        
+                                    <clr-dg-row *clrDgItems="let itemRequestDetail of itemRequest.itemRequestDetails" style="padding-top: .5rem" >
+                                        <clr-dg-cell>
+                                            <div style="display: flex; flex-direction: row; justify-content: center">
+                                                <cgb-item [item]="itemRequestDetail.item"></cgb-item>
+                                            </div>
+                                        </clr-dg-cell>
+                                        <clr-dg-cell>
+                                            {{itemRequestDetail.item.name}}
+                                        </clr-dg-cell>
+                                        <clr-dg-cell>
+                                            {{itemRequestDetail.quantity}}
+                                        </clr-dg-cell>    
+                                    </clr-dg-row>            
+                                </clr-datagrid>   
+                                <div style="display: flex; justify-content: flex-end; padding-top: .5rem ">
+                                    <button type="button" class="btn btn-danger-outline  btn-sm" (click)="onDenyItemRequest(itemRequest)">Deny</button>
+                                    <button type="button" class="btn btn-success btn-sm" (click)="onApproveItemRequest(itemRequest)">Approve</button>
+                                </div>   
+                            </div>
+                        </clr-dg-row-detail>
+                    </clr-dg-row>            
+                </clr-datagrid>      
+            </div>
+        </div>      
+    </div>
+</div>

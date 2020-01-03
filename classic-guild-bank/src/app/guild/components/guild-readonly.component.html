@@ -1,0 +1,57 @@
+<ng-container *ngIf="guild$ | async as guild; else noGuild">
+    <h3 style="margin-top: 0px;">{{guild.name}}</h3>
+    <hr style="margin-bottom: .25rem">
+
+    <clr-tabs>
+        <clr-tab>
+            <button clrTabLink id="tab1">Character Bank View</button>
+            <clr-tab-content id="bankContent" *clrIfActive>
+                <nocharacters *ngIf="(characters$ | async)?.length === 0">
+                </nocharacters>
+
+                <characterbank *ngFor="let character of (characters$ | async)" [character]="character" [readonly]="true">
+                </characterbank>
+            </clr-tab-content>
+        </clr-tab>
+        <clr-tab>
+            <button clrTabLink id="tab2">Guild List View</button>
+            <clr-tab-content id="guildList" *clrIfActive>
+                <nocharacters *ngIf="(characters$| async)?.length === 0">
+                </nocharacters>
+
+                <cgb-guild-list *ngIf="(characters$ | async)?.length > 0" [guild]="(guild$ | async)" [characters$]="characters$" >
+                </cgb-guild-list>
+            </clr-tab-content>
+        </clr-tab>
+        <clr-tab>
+            <button clrTabLink id="tab3">Character List View</button>
+            <clr-tab-content id="listContent" *clrIfActive>
+                <nocharacters *ngIf="(characters$ | async)?.length === 0">
+                </nocharacters>
+
+                <cgb-character-list *ngFor="let character of (characters$ | async)" [character]="character"></cgb-character-list>
+            </clr-tab-content>
+        </clr-tab>
+        <clr-tab>
+            <button clrTabLink id="tab4">Transaction List</button>
+            <clr-tab-content id="transactionContent" *clrIfActive>
+                <nocharacters *ngIf="(characters$ | async)?.length === 0">
+                </nocharacters>
+
+                <cgb-transaction-list *ngIf="(characters$ | async)?.length > 0" [guild]="(guild$ | async)"></cgb-transaction-list>
+            </clr-tab-content>
+        </clr-tab>
+    </clr-tabs>
+</ng-container>
+
+<ng-template #noGuild>
+    <cgb-guild-loading *ngIf="guildReadonlyLoading$ | async"></cgb-guild-loading>
+
+    <div class="card" *ngIf="!(guildReadonlyLoading$ | async)">
+        <div style="display:flex; flex-direction:column; justify-content: center; align-content: center; align-items: center; padding: 32px;">
+            <clr-icon shape="users" size="54"></clr-icon>
+            <h3>Guild Not Found</h3>
+            <h4>No guild found that matches this link. It has either been invalidated or public link sharing has been turned off.</h4>            
+        </div>
+    </div>
+</ng-template>

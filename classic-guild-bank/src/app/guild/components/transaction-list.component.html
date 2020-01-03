@@ -1,0 +1,73 @@
+<div class="clr-row" style="justify-content: center">
+
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="card-header">
+                Transactions
+            </div>
+            <div class="card-block">
+                
+                <clr-datagrid style="width: 100%;" (clrDgRefresh)="gridRefresh($event)">
+                    <clr-dg-column style="width: 140px">Date</clr-dg-column>
+                    <clr-dg-column>Character Name</clr-dg-column>
+                    <clr-dg-column style="width: 130px">Gold</clr-dg-column>
+                    <clr-dg-column style="width: 80px"> Type</clr-dg-column>    
+                    
+                    <clr-dg-placeholder>There are no transactions currently.</clr-dg-placeholder>
+        
+                    <clr-dg-row *ngFor="let transaction of transactions$ | async">
+                        <clr-dg-cell>
+                            {{transaction.transactionDate | date:'short'}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{transaction.characterName}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            <cgb-money [money]="transaction"></cgb-money>
+                        </clr-dg-cell>
+
+                        <clr-dg-cell>
+                            <span class="badge" [ngClass]="{'badge-success': (transaction.transactionType == 'Deposit'), 'badge-danger': (transaction.transactionType == 'Withdrawal')}">
+                                {{transaction.transactionType}}
+                            </span>
+                        </clr-dg-cell>
+                        
+                        <clr-dg-row-detail *clrIfExpanded>
+                            <div class="card-block" style="width: 100%; padding-top: 0px">
+                                
+                                <clr-datagrid>
+                                    <clr-dg-column style="width: 44px"></clr-dg-column>
+                                    <clr-dg-column>Item Name</clr-dg-column>
+                                    <clr-dg-column style="width: 60px">Quantity</clr-dg-column>
+                                    <clr-dg-placeholder>No Items</clr-dg-placeholder>
+                        
+                                    <clr-dg-row *clrDgItems="let transactionDetail of transaction.transactionDetails" style="padding-top: .5rem" >
+                                        <clr-dg-cell>
+                                            <div style="display: flex; flex-direction: row; justify-content: center">
+                                                <cgb-item [item]="transactionDetail.item"></cgb-item>
+                                            </div>
+                                        </clr-dg-cell>
+                                        <clr-dg-cell>
+                                            {{transactionDetail.item.name}}
+                                        </clr-dg-cell>
+                                        <clr-dg-cell>
+                                            {{transactionDetail.quantity}}
+                                        </clr-dg-cell>    
+                                    </clr-dg-row>            
+                                </clr-datagrid>     
+                            </div>
+                        </clr-dg-row-detail>                    
+                    </clr-dg-row>
+                    
+                    <clr-dg-footer>
+                        <clr-dg-pagination #pagination [clrDgPage]="page$ | async" [clrDgTotalItems]="transactionCount$ | async" [clrDgPageSize]="pageSize">
+                            <clr-dg-page-size [clrPageSizeOptions]="[1, 50,100,250]">transactions per page</clr-dg-page-size>
+                            {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+                            of {{pagination.totalItems}} transactions
+                        </clr-dg-pagination>
+                    </clr-dg-footer>
+                </clr-datagrid>      
+            </div>
+        </div>      
+    </div>
+</div>

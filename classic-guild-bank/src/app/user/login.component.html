@@ -1,0 +1,119 @@
+<ng-container *ngIf="loggedOut">
+    <clr-alert [clrAlertClosable]="true">
+        <clr-alert-item>
+            <span class="alert-text">
+                You have been logged out
+            </span>
+        </clr-alert-item>
+    </clr-alert>
+</ng-container>
+
+<!-- <div class="login-wrapper" style="background-image: unset; ">
+    <form class="login" [formGroup]="loginForm" style="border-right: 2px solid #adbbc4; min-height: initial;">
+    <section class="title">
+        <h3 class="welcome">Welcome to</h3>
+        Classic Guild Bank
+        <h5 class="hint">Login below or create a new account</h5>
+    </section>
+    <div class="login-group">
+        <clr-input-container>
+            <input type="text" name="username" clrInput placeholder="Username" formControlName="username"/>
+        </clr-input-container>
+        <clr-password-container>
+            <input type="password" name="password" clrPassword placeholder="Password" formControlName="password" />
+        </clr-password-container>
+        
+        <clr-alert *ngIf="errorText" [clrAlertClosable]="false" [clrAlertType]="'danger'">
+            <clr-alert-item>
+                <span class="alert-text">{{errorText}}</span>
+                <div *ngIf="errorAction" class="alert-actions">
+                    <a class="alert-action" href="javascript://" (click)="onErrorAction()">
+                        {{errorAction}}
+                    </a>
+                </div>
+            </clr-alert-item>
+        </clr-alert>
+
+        <clr-alert *ngIf="successText" 
+            [clrAlertType]="'success'"
+            [clrAlertClosable]="false">
+            <clr-alert-item>
+                <span class="alert-text">{{successText}}</span>
+            </clr-alert-item>
+        </clr-alert>
+
+        <button type="submit" class="btn btn-primary" (click)="onLogin()">
+            <ng-container *ngIf="!loggingIn">Login</ng-container>
+            <ng-container *ngIf="loggingIn">
+                <span class="spinner spinner-inline">Loading...</span>
+                <span> Logging In...</span>
+            </ng-container>
+        </button>
+        <div style="display: flex; flex-direction: row; justify-content: space-between" >
+            <a class="signup" (click)="registerAccount()">Create new account</a>
+            <a class="signup" (click)="resetPassword()">Forgot Password?</a>
+        </div>
+    </div>
+    </form>
+    <div class="splash-screen">
+        <img [src]="background$ | async" />
+    </div>
+</div> -->
+
+<div class="splash-screen">
+    <img src="../../assets/darkportal.jpg" />
+</div>
+
+<clr-modal class="centered-modal" [clrModalOpen]="showLogin" [clrModalClosable]="false">
+    <h3 class="modal-title">Welcome to Classic Guild Bank</h3>
+    <div class="modal-body">
+        <h5 class="hint">Login below or create a new account</h5>
+        <form clrForm [formGroup]="loginForm" class="centered-form">
+            
+            <input type="text" name="username" clrInput placeholder="Username" formControlName="username" style="width: 236px" />
+            <clr-password-container>
+                <input type="password" name="password" clrPassword placeholder="Password" formControlName="password" (keyup.enter)="onLogin()" />
+            </clr-password-container>            
+            
+            <clr-alert *ngIf="errorText" [clrAlertClosable]="false" [clrAlertType]="'danger'">
+                <clr-alert-item>
+                    <span class="alert-text">{{errorText}}</span>
+                    <div *ngIf="errorAction" class="alert-actions">
+                        <a class="alert-action" href="javascript://" (click)="onErrorAction()">
+                            {{errorAction}}
+                        </a>
+                    </div>
+                </clr-alert-item>
+            </clr-alert>
+    
+            <clr-alert *ngIf="successText" 
+                [clrAlertType]="'success'"
+                [clrAlertClosable]="false">
+                <clr-alert-item>
+                    <span class="alert-text">{{successText}}</span>
+                </clr-alert-item>
+            </clr-alert>
+        </form>
+    </div>
+    <div class="modal-footer" style="display: flex; flex-direction: column;">
+        <div class="clr-col-lg-8 clr-offset-lg-2">
+            <button type="submit" class="btn btn-primary" style="width: 100%" (click)="onLogin()">
+                <ng-container *ngIf="!loggingIn">Login</ng-container>
+                <ng-container *ngIf="loggingIn">
+                    <span class="spinner spinner-inline">Loading...</span>
+                    <span> Logging In...</span>
+                </ng-container>
+            </button>
+        </div>
+        <div class="clr-col-lg-8 clr-offset-lg-2">
+            <div style="display: flex; flex-direction: row; justify-content: space-around" >
+                <a class="signup" (click)="registerAccount()">Create new account</a>
+                <a class="signup" (click)="resetPassword()">Forgot Password?</a>
+            </div>
+        </div>
+        <div class="cgb-art-credits">Artwork by <a href="https://foranger.artstation.com/">Adam Torn</a></div>
+    </div>    
+</clr-modal>
+
+<cgb-register-user [showModal]="showRegisterModal" (closeRequested)="onRegisterClosed()"></cgb-register-user>
+<cgb-reset-password [showModal]="showResetPassword" (closeRequested)="onResetClosed()"></cgb-reset-password>  

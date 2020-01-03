@@ -1,0 +1,22 @@
+.cgb-nav
+{
+    flex: 0 0 2rem;
+}
+
+.cgb-nav > ul
+{
+   box-shadow: none;
+} 
+
+.cgb-import-button-nav-item
+{
+    flex: 1 1 auto;
+    justify-content: flex-end;
+    display: flex;
+}
+
+@media screen and (max-width: 576px) {
+    .cgb-import-button {
+        display: none;
+    }    
+}

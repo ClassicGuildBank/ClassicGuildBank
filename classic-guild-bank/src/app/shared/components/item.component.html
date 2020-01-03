@@ -1,0 +1,10 @@
+
+<div class="icon" [ngClass]="{'large': size === 'large'}">
+    <ins *ngIf="item" [style.background-image]="itemUrl"></ins>
+    <ins *ngIf="!item"></ins>
+    <del></del>
+    <a *ngIf="item && !disableLink" target="_blank" [attr.href]="item | wowheadUrl"></a>
+    <a *ngIf="!item || disableLink" target="_blank"></a>
+    <span *ngIf="quantity > 1" class="quantity" [ngStyle]="itemStyle">{{quantity}}</span>
+</div>
+

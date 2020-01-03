@@ -1,0 +1,47 @@
+<div class="main-container">
+    <!-- Not showing the alert on the login page since you cannot close it now that the login controls are on a modal -->
+    <!-- <clr-alert *ngIf="!(isLoginPage$ | async)" [clrAlertType]="'warning'" [clrAlertAppLevel]="true" [clrAlertIcon]="'warning'">
+        <clr-alert-item>
+            <span class="alert-text">Classic Guild Bank is still under construction. Some features may not be functional.</span>
+        </clr-alert-item>
+    </clr-alert> -->
+
+    <ng-container *ngIf="!(isLoginPage$ | async)">
+        <cgb-header [readonly]="isReadonly$ | async"></cgb-header>
+
+        <nav *ngIf="!(isReadonly$ | async) && (authorized$ | async)" class="subnav cgb-nav">
+            <ul class="nav bread-crumb">
+                <li class="nav-item">
+                    <a class="nav-link" [class.active]="this.router.url === '/' || this.router.url === '/guild'" routerLink="">Guild Bank</a>
+                </li>                
+                <li class="nav-item">
+                    <a class="nav-link" [class.active]="router.url ==='/request'" routerLink="/request">Request Items</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" [class.active]="router.url ==='/requests/myrequests'" routerLink="/requests/myrequests">My Requests</a>
+                </li>
+                <li *ngIf="(userCanProcessItemRequests$ | async)" class="nav-item">
+                    <a class="nav-link" [class.active]="this.router.url === '/requests'" routerLink="/requests">
+                        Item Requests 
+                        <span class="badge" [ngClass]="{'badge-success': ((itemRequestCount$ | async) > 0)}">{{(itemRequestCount$ | async)}}</span>
+                    </a>
+                </li>
+                <li *ngIf="(isGuildOwner$ | async)" class="nav-item">
+                    <a class="nav-link" [class.active]="this.router.url === '/guild/manage'" routerLink="/guild/manage">Manage Guild</a>
+                </li>
+                <li *ngIf="(userCanUpload$ | async)" class="nav-item cgb-import-button-nav-item">
+                    <button class="btn btn-outline cgb-import-button" (click)="onImportFromAddonClicked()">Import From Addon</button>
+                </li>         
+            </ul>
+        </nav>
+    </ng-container>
+
+    <div class="content-container">
+        <div class="content-area">         
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+    
+    <cgb-import-from-addon *ngIf="showImportFromAddonModal" (closeRequested)="onImportFromAddonModalClosed($event)" (onImportStringUploaded)="onImportStringUploaded($event)"></cgb-import-from-addon>
+</div>
+    

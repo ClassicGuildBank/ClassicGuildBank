@@ -1,0 +1,10 @@
+.cgb-import-form .clr-control-container
+{
+    width: 100%;
+}
+
+.cgb-import-form .clr-textarea
+{
+    width: 100%;
+    min-height: 300px;
+}

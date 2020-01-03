@@ -1,0 +1,170 @@
+<div class="clr-row" style="justify-content: center" *ngIf="(guild$ | async)?.userIsOwner">
+    <div class="clr-col-lg-6 clr-col-12">
+        <div class="card">
+            <div class="card-header">
+                {{(guild$ | async)?.name}}
+            </div>
+            <div class="card-block">
+                    <div class="card-title">
+                        Guild Members
+                    </div>
+                    
+                    <clr-datagrid>
+                        <clr-dg-column>Name</clr-dg-column>
+                        <clr-dg-column style="width: 120px">Can Upload</clr-dg-column>
+
+                        <clr-dg-placeholder>There are no members currently. Click 'Invite People' below to get an invite link.</clr-dg-placeholder>
+    
+                        <clr-dg-row *clrDgItems="let guildMember of guildMembers$ | async">
+                            <clr-dg-action-overflow *ngIf="(guild$ | async)?.userIsOwner">
+                                <button class="action-item" (click)="onDeleteGuildMember(guildMember)">Remove Member From Guild</button>
+                                <button class="action-item" (click)="onToggleUploadAccess(guildMember)">{{guildMember.canUpload ? 'Revoke Upload Access' : 'Grant Upload Access'}}</button>
+                            </clr-dg-action-overflow>
+                            <clr-dg-cell>{{guildMember.displayName}}</clr-dg-cell>
+                            <clr-dg-cell>{{guildMember.canUpload ? 'Yes' : 'No'}}</clr-dg-cell>
+                        </clr-dg-row>            
+                    </clr-datagrid>
+            </div>
+            <!-- <div class="card-block">
+                <div class="card-title">
+                    Guild Preferences
+                </div>
+                <form clrForm>
+                   
+                        <clr-checkbox-wrapper>
+                            <input type="checkbox" clrCheckbox name="options" />
+                            <label>Show Bank View</label>
+                        </clr-checkbox-wrapper>
+                        <clr-checkbox-wrapper>
+                            <input type="checkbox" clrCheckbox name="options" />
+                            <label>Show Guild List</label>
+                        </clr-checkbox-wrapper>
+                        <clr-checkbox-wrapper>
+                            <input type="checkbox" clrCheckbox name="options" />
+                            <label>Show Character List</label>
+                        </clr-checkbox-wrapper>
+                        <clr-checkbox-wrapper>
+                            <input type="checkbox" clrCheckbox name="options" />
+                            <label>Show Transaction List</label>
+                        </clr-checkbox-wrapper>
+
+                </form>
+            </div> -->
+            <div class="card-footer">
+                <button class="btn btn-sm btn-link" (click)="invitePeople()">Invite People</button>
+                <button *ngIf="(guild$ | async)?.userIsOwner" class="btn btn-sm btn-link" (click)="showPublicSettings()">Public Settings</button>
+                <button *ngIf="(guild$ | async)?.userIsOwner" class="btn btn-sm btn-link" (click)="renameGuild()">Rename Guild</button>
+                <clr-dropdown *ngIf="(guild$ | async)?.userIsOwner">
+                    <button class="dropdown-toggle btn btn-sm btn-link" clrDropdownTrigger>
+                        More Actions
+                        <clr-icon shape="caret down"></clr-icon>
+                    </button>
+                    <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+                        <a clrDropdownItem (click)="deleteGuild()">Delete Guild</a>
+                    </clr-dropdown-menu>
+                </clr-dropdown>
+            </div>
+        </div>
+    </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="showInvitePeopleModal" [clrModalSize]="'lg'">
+    <h3 class="modal-title">Invite People to {{(guild$ | async)?.name}}</h3>
+    <div class="modal-body">
+        <p>Share this link with others to grant access to this guild's bank.</p>
+        <div style="display: flex; background-color: #1b2a32; border: 1px solid #0f171c; padding: 0px 12px; margin-top: 8px;">
+            <span style="display: inline-flex; align-items: center">{{ inviteUrl }}</span>
+            <button style="margin-left: auto; margin-right: 0px" 
+                type="button" 
+                class="btn btn-primary" 
+                [cgbCopyClipboard]="inviteUrl"
+                (copied)="notifyCopied($event)">
+                {{copyText}}
+            </button>
+        </div>
+        <div *ngIf="(guild$ | async)?.userIsOwner" style="display: flex; flex-direction: row; justify-content: space-between">
+            <span style="display: flex; flex-direction: column; justify-content: center">Click the following to generate a new link. This will invalidate the current link.</span>
+            <button style="float: right" class="btn btn-link" (click)="resetLink()" [disabled]="isLoading">
+                    <span *ngIf="isLoading" class="spinner spinner-inline">
+                        Loading...
+                    </span> 
+                    <span>Reset Link</span> 
+            </button>
+        </div>
+    </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showPublicSettingsModal" [clrModalSize]="'lg'">
+    <h3 class="modal-title">Public Settings for {{(guild$ | async)?.name}}</h3>
+    <div class="modal-body">
+        <ng-container *ngIf="!publicLinkEnabled">
+            <p>Enabling the public link will grant anyone with the link readonly access to your guild bank. If you wish to enable the public link, click the button below.</p>
+            <div style="display: flex; flex-direction: row; justify-content: center">
+                <button class="btn btn-primary" (click)="enablePublicLink()">Enable Public Link</button>
+            </div>
+        </ng-container>
+        
+        <ng-container *ngIf="publicLinkEnabled">
+            <div class="clr-row">
+                <span class="clr-col">Public link is enabled. Anyone with this link can view your guild bank data.  Click the following to disable the public link.</span>
+                <div class="clr-col-lg-3">
+                    <button class="btn btn-warning-outline" (click)="disablePublicLink()">
+                        <span *ngIf="isLoading" class="spinner spinner-inline">
+                            Loading...
+                        </span> 
+                                
+                        <span>Disable Public Link</span>
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; background-color: #1b2a32; border: 1px solid #0f171c; padding: 0px 12px; margin-top: 8px;">
+                <span style="display: inline-flex; align-items: center">{{ publicUrl }}</span>
+                <button style="margin-left: auto; margin-right: 0px" 
+                    type="button" 
+                    class="btn btn-primary" 
+                    [cgbCopyClipboard]="publicUrl"
+                    (copied)="notifyCopied($event)">
+                    {{copyText}}
+                </button>
+            </div>
+            <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <span style="display: flex; flex-direction: column; justify-content: center">Click the following to generate a new link. This will invalidate the current link.</span>
+                <button class="btn btn-link" (click)="resetPublicLink()" [disabled]="isLoading">
+                        <span *ngIf="isLoading" class="spinner spinner-inline">
+                            Loading...
+                        </span> 
+                        <span>Reset Link</span> 
+                </button>
+            </div>
+        </ng-container>
+    </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showRenameGuildModal">
+    <h3 class="modal-title">Rename Guild</h3>
+    <div class="modal-body">
+        <form class="clr-form clr-form-horizontal" #renameGuildForm="ngForm">
+            <clr-input-container>
+                <label>Guild Name</label>
+                <input clrInput type="text" [(ngModel)]="guildNameForRename" name="guildName" required />
+            </clr-input-container>               
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="cancelRename()">Cancel</button>
+        <button type="button" class="btn btn-primary" [disabled]="!renameGuildForm.form.valid" (click)="submitRenameGuildForm()">Ok</button>
+    </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showDeleteGuildModal">
+    <h3 class="modal-title">Delete Guild</h3>
+    <div class="modal-body">
+        <p>Are you sure you wish to delete this guild? This cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="cancelDelete()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="deleteConfirmed()">Ok</button>
+    </div>
+</clr-modal>
+    

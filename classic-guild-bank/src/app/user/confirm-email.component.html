@@ -1,0 +1,31 @@
+<div class="card" *ngIf="isLoading">
+    <div style="display:flex; flex-direction:column; justify-content: center; align-content: center; align-items: center; padding: 32px;">
+        <span class="spinner spinner-inverse">
+            Loading...
+        </span>
+        <h3>Confirming Account...</h3>        
+    </div>
+</div>
+ 
+    
+<div *ngIf="confirmed && !isLoading" class="card">
+    <div style="display:flex; flex-direction:column; justify-content: center; align-content: center; align-items: center; padding: 32px;">
+        <clr-icon shape="users" size="54"></clr-icon>
+        <h3>Your account has been confirmed!</h3>
+        <h4>Click below to return to the login</h4>            
+    </div>
+    <div class="card-footer" style="display:flex; flex-direction:row; justify-content: center; align-content: center; align-items: center;">
+        <button type="button" class="btn btn-primary" routerLink="/">Login</button>
+    </div>
+</div>
+
+<div *ngIf="!confirmed && !isLoading"  class="card">
+    <div style="display:flex; flex-direction:column; justify-content: center; align-content: center; align-items: center; padding: 32px;">
+        <clr-icon shape="users" size="54"></clr-icon>
+        <h3>We were unable to confirm your account.</h3>
+        <h4>Click below to resend the confirmation email</h4>            
+    </div>
+    <div class="card-footer" style="display:flex; flex-direction:row; justify-content: center; align-content: center; align-items: center;">
+        <button type="button" class="btn btn-primary" (click)="resend()">Resend Confirmation</button>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+{ 
+  "api": "https://classicguildbankapi.azurewebsites.net/api",
+  "client": "https://classicguildbank.com",
+  "patreon": {
+    "oauth_redirect": "https://classicguildbank.com/patreon/callback",
+    "client_id": "hmjgYD08W4nvMauZip0okmlof5C1bQWr1CfMCJ_pnccqtZobwBbDme4jSvyekSRh"
+  },
+  "wowhead": {
+    "en" : "classic.wowhead.com",
+    "cn" : "cn.classic.wowhead.com",
+    "de" : "de.classic.wowhead.com",
+    "es" : "es.classic.wowhead.com",
+    "fr" : "fr.classic.wowhead.com",
+    "it" : "it.classic.wowhead.com",
+    "ru" : "ru.classic.wowhead.com",
+    "ko" : "ko.classic.wowhead.com",
+    "pt" : "pt.classic.wowhead.com"
+  }
+}

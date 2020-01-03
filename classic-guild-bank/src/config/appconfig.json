@@ -1,0 +1,19 @@
+{
+  "api": "https://localhost:44375/api",
+  "client": "http://localhost:4200",
+  "patreon": {
+    "oauth_redirect": "http://localhost:4200/patreon/callback",
+    "client_id": "9kNHdgLDtkGIcOUTQYy3bFlNooYiUfvsdvgK8XsqbaZ23Fka1Ge5hhxoVJINrjbi"
+  },
+  "wowhead": {
+    "en" : "classic.wowhead.com",
+    "cn" : "cn.classic.wowhead.com",
+    "de" : "de.classic.wowhead.com",
+    "es" : "es.classic.wowhead.com",
+    "fr" : "fr.classic.wowhead.com",
+    "it" : "it.classic.wowhead.com",
+    "ru" : "ru.classic.wowhead.com",
+    "ko" : "ko.classic.wowhead.com",
+    "pt" : "pt.classic.wowhead.com"
+  }
+}

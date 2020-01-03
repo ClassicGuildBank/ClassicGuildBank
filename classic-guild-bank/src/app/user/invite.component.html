@@ -1,0 +1,15 @@
+<div class="card">
+    <div style="display:flex; flex-direction:column; justify-content: center; align-content: center; align-items: center; padding: 32px;">
+        <span class="spinner spinner-inverse">
+            Loading...
+        </span>
+        <h3>{{statusMessage}}</h3>
+
+        <clr-alert *ngIf="errorMessage" [clrAlertType]="'danger'">
+            <clr-alert-item>
+                <span class="alert-text">{{errorMessage}}</span>
+            </clr-alert-item>
+        </clr-alert> 
+             
+    </div>
+</div>

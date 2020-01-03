@@ -1,0 +1,76 @@
+<ng-container *ngIf="guild$ | async as guild; else noGuild">
+    <clr-tabs>
+        <clr-tab>
+            <button clrTabLink id="tab1">Character Bank View</button>
+            <clr-tab-content id="bankContent" *clrIfActive>
+                <cgb-guild-loading *ngIf="charactersLoading$ | async"></cgb-guild-loading>
+
+                <nocharacters *ngIf="!(charactersLoading$ | async) && (guildStore.characters$ | async)?.length === 0">
+                </nocharacters>
+
+                <div *ngIf="!(charactersLoading$ | async)">
+                    <characterbank *ngFor="let character of (guildStore.characters$ | async)" [character]="character" [isGuildOwner]="(guild$ | async)?.userIsOwner">
+                    </characterbank>
+                </div>
+
+            </clr-tab-content>
+        </clr-tab>
+        <clr-tab>
+            <button clrTabLink id="tab2">Guild List View</button>
+            <clr-tab-content id="guildList" *clrIfActive>
+                <cgb-guild-loading *ngIf="charactersLoading$ | async"></cgb-guild-loading>
+
+                <nocharacters *ngIf="!(charactersLoading$ | async) && (guildStore.characters$ | async)?.length === 0">
+                </nocharacters>
+
+                <cgb-guild-list *ngIf="!(charactersLoading$ | async) && (guildStore.characters$ | async)?.length > 0" [guild]="guild" [characters$]="guildStore.characters$">
+                </cgb-guild-list>
+            </clr-tab-content>
+        </clr-tab>
+        <clr-tab>
+            <button clrTabLink id="tab3">Character List View</button>
+            <clr-tab-content id="listContent" *clrIfActive>
+                <cgb-guild-loading *ngIf="charactersLoading$ | async"></cgb-guild-loading>
+                
+                <nocharacters *ngIf="!(charactersLoading$ | async) && (guildStore.characters$ | async)?.length === 0">
+                </nocharacters>
+
+                <div *ngIf="!(charactersLoading$ | async)">
+                    <cgb-character-list *ngFor="let character of (guildStore.characters$ | async)" [character]="character">                      
+                    </cgb-character-list>
+                </div>
+
+            </clr-tab-content>
+        </clr-tab>
+
+        <clr-tab>
+            <button clrTabLink id="tab4">Transaction List</button>
+            <clr-tab-content id="transactionContent" *clrIfActive>
+                <cgb-guild-loading *ngIf="charactersLoading$ | async"></cgb-guild-loading>
+                
+                <nocharacters *ngIf="!(charactersLoading$ | async) && (guildStore.characters$ | async)?.length === 0">
+                </nocharacters>
+
+                <cgb-transaction-list *ngIf="!(charactersLoading$ | async) && (guildStore.characters$ | async)?.length > 0" [guild]="guild"></cgb-transaction-list>
+            </clr-tab-content>
+        </clr-tab>
+    </clr-tabs>
+</ng-container>
+
+<ng-template #noGuild>
+    <cgb-guild-loading *ngIf="guildsLoading$ | async"></cgb-guild-loading>
+
+    <div class="card" *ngIf="!(guildsLoading$ | async)">
+        <div style="display:flex; flex-direction:column; justify-content: center; align-content: center; align-items: center; padding: 32px;">
+            <clr-icon shape="users" size="54"></clr-icon>
+            <h3>No Guilds</h3>
+            <h4>There are no guilds attached to your account</h4>            
+        </div>
+        <div class="card-footer" style="display:flex; flex-direction:row; justify-content: center; align-content: center; align-items: center;">
+            <button type="button" class="btn btn-primary" (click)="addNewGuild()">Create Guild</button>
+        </div>
+    </div>
+
+    <cgb-add-guild *ngIf="showAddGuildModal" (closeRequested)="onAddGuildModalClosed($event)"></cgb-add-guild>
+
+</ng-template>

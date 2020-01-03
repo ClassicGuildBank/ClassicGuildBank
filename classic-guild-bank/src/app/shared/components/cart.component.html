@@ -1,0 +1,82 @@
+<!-- <div class="clr-row" style="justify-content: center">
+    <div class="clr-col-xl-4 clr-col-lg-4 clr-col-md-6 clr-col-sm-8 clr-col-12">
+        <div class="card">
+            <div class="card-header">
+                View Cart
+            </div>
+            <div class="card-block">
+                <div class="clr-row">
+                    
+                    <div class="clr-col-4">
+                        <span>Gold Available</span>
+                        <cgb-money [money]="availableGold$ | async"></cgb-money>
+                    </div>
+                    
+                    <div class="clr-col-5" [ngClass]="{'clr-error': goldForm.invalid}">
+                        <span>Requested Gold</span>
+                        <div style="display: flex; flex-direction: row;">
+                            <div>
+                                <input type="text" class="clr-input" style="width: 40px;" [formControl]="gold" name="gold">
+                                <span class="money gold"></span>
+                            </div>
+                        
+                            <div>
+                                <input type="text" class="clr-input" style="width: 40px;" [formControl]="silver" name="silver">
+                                <span class="money silver"></span>
+                            </div>
+                            <div>
+                                <input type="text" class="clr-input" style="width: 40px;" [formControl]="copper" name="copper">
+                                <span class="money copper"></span>
+                            </div>
+                        </div>
+                        <span class="clr-subtext " *ngIf="goldForm.invalid">Invalid Gold Amount</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-block">
+                <clr-datagrid style="width: 100%;">
+                    <clr-dg-column style="width: 44px"></clr-dg-column>
+                    <clr-dg-column>
+                        Name
+                    </clr-dg-column>
+                    <clr-dg-column>Available</clr-dg-column>
+                    <clr-dg-column>Quantity</clr-dg-column>
+                    <clr-dg-column></clr-dg-column>
+                    <clr-dg-placeholder>Cart is empty</clr-dg-placeholder>
+        
+                    <clr-dg-row *clrDgItems="let listItem of (cartItems$ | async)">
+                        <clr-dg-cell>
+                            <div style="display: flex; flex-direction: row; justify-content: center">
+                                <cgb-item [item]="listItem.item"></cgb-item>
+                            </div>
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.item.name}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.available}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            <div [ngClass]="{'clr-error': listItem.quantity.invalid}">
+                                <input class="clr-input" [name]="listItem.item.id" [formControl]="listItem.quantity" [max]="listItem.available">
+                                <span class="clr-subtext" *ngIf="listItem.quantity.invalid">Invalid Item Quantity</span>
+                            </div>
+                        </clr-dg-cell>
+                        
+                        <clr-dg-cell>
+                            <button class="btn btn-outline-danger btn-icon" (click)="removeFromCart(listItem)">
+                                <clr-icon shape="trash"></clr-icon>
+                            </button>
+                        </clr-dg-cell>
+                    </clr-dg-row>            
+                </clr-datagrid>      
+            </div>
+            <div class="card-footer" style="display:  flex; flex-direction: row-reverse;">
+                <button type="button" class="btn btn-success-outline" [disabled]="(cartItems$ | async).length === 0">
+                    Checkout 
+                </button>
+            </div>
+        </div>
+        
+    </div>
+</div> -->

@@ -1,0 +1,16 @@
+<div style="display: flex; flex-direction: row-reverse; justify-content: center">
+    <ins *ngIf="env.production" 
+        class='adsbygoogle'
+        style="display: block;width:728px;height:90px"
+        data-ad-client="ca-pub-1913772945306391"
+        data-ad-format="auto">
+    </ins>
+
+    <div *ngIf="!env.production"
+        style="width: 728px; height: 90px; border: 1px dashed #49afd9">
+        <div style="display: flex; flex-direction: column; justify-content: center; align-content: center; align-items: center;">
+            <clr-icon shape="plugin" style="width: 36px; height:36px"></clr-icon>
+            <h3 style="margin-top: 12px">Advertisement</h3>
+        </div>
+    </div>
+</div>

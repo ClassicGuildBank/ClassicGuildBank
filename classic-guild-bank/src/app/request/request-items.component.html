@@ -1,0 +1,174 @@
+<cgb-guild-loading *ngIf="(guildsLoading$ | async) || (charactersLoading$ | async)"></cgb-guild-loading>
+
+<div class="clr-row" style="justify-content: center" *ngIf="showSubmitSuccess">
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="request-items-success-card card-block">
+                <clr-icon shape="success-standard" size="54"></clr-icon>
+                <h1>
+                    Successfully submitted request
+                </h1>                
+                <h3>
+                    Click the button below to submit an additional request
+                </h3>
+                <button class="btn btn-primary" (click)="clearSubmitSuccess()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="clr-row" style="justify-content: center" *ngIf="!(guildsLoading$ | async) && !(charactersLoading$ | async) && !showSubmitSuccess">
+
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between;">
+                {{ (guild$ | async)?.name }} - Item Request
+            </div>
+            <div class="card-block">
+                <div class="clr-row">
+                    <div class="clr-col-10">
+                        <clr-input-container style="margin-top: 0px;">
+                            <label>Character Name</label>
+                            <input clrInput type="text" [(ngModel)]="characterName" name="characterName" required />
+                        </clr-input-container>    
+                    </div>
+                    <div class="clr-col-2">
+                        <span>Requested Gold</span>
+                        <cgb-money [money]="requestedGold$ | async"></cgb-money>
+                    </div>
+                </div>
+            </div>
+                <div class="card-block">
+                    <clr-datagrid style="width: 100%;">
+                        <clr-dg-column style="width: 44px"></clr-dg-column>
+                        <clr-dg-column [clrDgSortBy]='nameComparator'>Name</clr-dg-column>
+                        <clr-dg-column [clrDgSortBy]='availableComparator' style="width: 60px">Available</clr-dg-column>
+                        <clr-dg-column [clrDgSortBy]='quantityComparator' style="width: 60px">Quantity</clr-dg-column>
+                        <clr-dg-column style="width: 44px"></clr-dg-column>
+                        <clr-dg-placeholder>No Items Have Been Added</clr-dg-placeholder>
+            
+                        <clr-dg-row *clrDgItems="let listItem of (cartItems$ | async)">
+                            <clr-dg-cell>
+                                <div style="display: flex; flex-direction: row; justify-content: center">
+                                    <cgb-item [item]="listItem.item"></cgb-item>
+                                </div>
+                            </clr-dg-cell>
+                            <clr-dg-cell>
+                                {{listItem.item.name}}
+                            </clr-dg-cell>
+                            <clr-dg-cell>
+                                {{listItem.available}}
+                            </clr-dg-cell>
+                            <clr-dg-cell>
+                                {{listItem.quantity.value}}
+                            </clr-dg-cell>
+                            
+                            <clr-dg-cell>
+                                <button class="btn btn-outline-danger btn-icon" (click)="removeFromCart(listItem)">
+                                    <clr-icon shape="trash"></clr-icon>
+                                </button>
+                            </clr-dg-cell>
+                        </clr-dg-row>            
+                    </clr-datagrid>      
+                </div>
+            <div class="card-footer" style="display:  flex; flex-direction: row-reverse;">
+                <button type="button" class="btn btn-success-outline" [disabled]="(itemCount$ | async) === 0 || !characterName" (click)="submitRequest()">
+                    Submit Request 
+                </button>
+            </div>
+        </div>
+    </div>  
+    
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+            <div class="card">
+                <div class="card-header">
+                    Gold
+                </div>
+                <div class="card-block">
+                    <div class="clr-row">
+                    
+                        <div class="clr-col-4">
+                            <span>Gold Available</span>
+                            <cgb-money [money]="guildMoney$ | async"></cgb-money>
+                        </div>
+                        
+                        <div class="clr-col-5" [ngClass]="{'clr-error': goldForm.invalid}">
+                            <span>Request Gold</span>
+                            <div style="display: flex; flex-direction: row;">
+                                <div>
+                                    <input type="text" class="clr-input" style="width: 40px;" [formControl]="gold" name="gold">
+                                    <span class="money gold"></span>
+                                </div>
+                            
+                                <div>
+                                    <input type="text" class="clr-input" style="width: 40px;" [formControl]="silver" name="silver">
+                                    <span class="money silver"></span>
+                                </div>
+                                <div>
+                                    <input type="text" class="clr-input" style="width: 40px;" [formControl]="copper" name="copper">
+                                    <span class="money copper"></span>
+                                </div>
+                            </div>
+                            <span class="clr-subtext " *ngIf="goldForm.invalid">Invalid Gold Amount</span>
+                        </div>
+                        <div class="clr-col-3" style="padding-top: 14px; display: flex; flex-direction: row-reverse;">
+                            <button class="btn btn-outline cgb-import-button" (click)="addGoldToCart()" [disabled]="goldForm.invalid">Update</button>
+                        </div>
+    
+                    </div>
+  
+                </div>
+            </div>      
+        </div>
+
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="card-header">
+                Items
+            </div>
+            <div class="card-block">
+                <cgb-request-filter [filterName]="'requestListFilter'" [data]="(listData$ | async)" [showCategories]="true" (filtered)="onFiltered($event)"></cgb-request-filter>
+                <clr-datagrid style="width: 100%;">
+                    <clr-dg-column style="width: 44px"></clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='nameComparator'>Name</clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='classComparator'>Category</clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='subclassComparator'>Subcategory</clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='availableComparator' style="width: 60px">Available</clr-dg-column>
+                    <clr-dg-column style="width: 200px">Quantity</clr-dg-column>
+                    <clr-dg-column style="width: 110px"></clr-dg-column>
+                    <clr-dg-placeholder>There are no items currently. Click 'Import From Addon' to import some items.</clr-dg-placeholder>
+        
+                    <clr-dg-row *clrDgItems="let listItem of filteredData">
+                        <clr-dg-cell>
+                            <div style="display: flex; flex-direction: row; justify-content: center">
+                                <cgb-item [item]="listItem.item"></cgb-item>
+                            </div>
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.item.name}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.category}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.subcategory}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.available}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            <div [ngClass]="{'clr-error': listItem.quantity.invalid}">
+                                <input class="clr-input" [name]="listItem.item.id" [formControl]="listItem.quantity" [max]="listItem.available">
+                                <span class="clr-subtext" *ngIf="listItem.quantity.invalid">Invalid Item Quantity</span>
+                            </div>
+                        </clr-dg-cell>
+                        
+                        <clr-dg-cell>
+                            <button class="btn btn-outline cgb-import-button" [disabled]="listItem.quantity.invalid || listItem.quantity.value === 0" (click)="addItemToCart(listItem)">Update</button>
+                        </clr-dg-cell>
+                    </clr-dg-row>            
+                </clr-datagrid>      
+            </div>
+        </div>      
+    </div>
+</div>

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WowheadItemSeeder": {
+      "commandName": "Project",
+      "commandLineArgs": "--lang ru"
+    }
+  }
+}

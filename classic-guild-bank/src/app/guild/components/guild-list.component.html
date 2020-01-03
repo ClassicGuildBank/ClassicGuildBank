@@ -1,0 +1,88 @@
+<div class="clr-row" style="justify-content: center">
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="card-header">
+                {{guild?.name}}
+                <cgb-money [money]="guildMoney"></cgb-money>
+            </div>
+            <div class="card-block">
+                <clr-datagrid style="width: 100%;">
+                    <clr-dg-column>Character</clr-dg-column>
+                    <clr-dg-column>
+                        Gold
+                    </clr-dg-column>
+                    <clr-dg-row *clrDgItems="let character of (characters$ | async)">
+                        <clr-dg-cell>
+                            {{character.name}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            <cgb-money [money]="character"></cgb-money>
+                        </clr-dg-cell>
+                    </clr-dg-row>
+                </clr-datagrid>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="card-header">
+                Items
+            </div>
+            <div class="card-block">
+                <cgb-guild-filter [filterName]="'guildListFilter'" [data]="(listData$ | async)" (filtered)="onFiltered($event)"></cgb-guild-filter>
+                <clr-datagrid style="width: 100%;">
+                    <clr-dg-column style="width: 44px"></clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='nameComparator'>
+                        Name
+                    </clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='quantityComparator'>Quantity</clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='classComparator'>
+                        Category
+                    </clr-dg-column>
+                    <clr-dg-column [clrDgSortBy]='subclassComparator'>Subcategory</clr-dg-column>
+
+                    <clr-dg-placeholder>There are no items currently. Click 'Import From Addon' to import some items.</clr-dg-placeholder>
+        
+                    <clr-dg-row *clrDgItems="let listItem of filteredData">
+                        <clr-dg-cell>
+                            <div style="display: flex; flex-direction: row; justify-content: center">
+                                <cgb-item [item]="listItem.item"></cgb-item>
+                            </div>
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.item.name}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.quantity}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.category}}
+                        </clr-dg-cell>
+                        <clr-dg-cell>
+                            {{listItem.subcategory}}
+                        </clr-dg-cell>
+        
+                        <clr-dg-row-detail *clrIfExpanded>
+                            <table class="table" style="margin-top: 0px;">
+                                <thead>
+                                    <tr>
+                                        <th>Character</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let kvp of listItem.contributions | keyvalue">
+                                        <td>{{kvp.key}}</td>
+                                        <td>{{kvp.value}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </clr-dg-row-detail>
+                    </clr-dg-row>            
+                </clr-datagrid>      
+            </div>
+        </div>      
+    </div>
+</div>

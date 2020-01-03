@@ -1,0 +1,58 @@
+<header class="header header-6">
+    <div class="branding">
+        <a href="javascript://" class="nav-link">
+            <img src="../../assets/normal-transparent.png" width="50px" height="50px" />
+            <span class="title cgb-header-title" style="margin-left: .5rem">Classic Guild Bank</span>
+        </a>
+    </div>
+    <div class="header-nav cgb-header-nav">
+        <a href="https://discord.gg/UrQS4qZ" target="_blank" class="nav-link nav-text">Contact</a>
+        
+        <a href="https://www.curseforge.com/wow/addons/classic-guild-bank/download" target="_blank" class="nav-link nav-text">Get Addon</a> 
+        
+        <!-- <a href="https://github.com/ClassicGuildBank/ClassicGuildBank/archive/master.zip" target="_blank" class="nav-link nav-text">Get Addon</a> -->
+        <a href="https://github.com/ClassicGuildBank/ClassicGuildBank/issues" target="_blank" class="nav-link nav-text">Report Bug</a>
+    </div>
+    <div class="header-nav cgb-header-nav">
+        <a href="https://www.patreon.com/user/posts?u=21632263" target="_blank" class="nav-link nav-text">Patreon</a>
+        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=J44L65AWKA5B8&item_name=Classic+Guild+Bank+Donation&currency_code=USD&source=url" target="_blank" class="nav-link nav-text">Donate</a>
+    </div>
+    <div class="header-actions">
+        <ng-container *ngIf="!readonly">
+            <clr-dropdown>
+                <button *ngIf="(activeGuild$ | async)" class="nav-text" clrDropdownTrigger>
+                    {{(activeGuild$ | async).name}}
+                    <clr-icon shape="caret down"></clr-icon>
+                </button>
+                <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+                    <a clrDropdownItem *ngFor="let guild of (guilds$ | async)" (click)="onGuildSelected(guild)">{{guild.name}}</a>
+                    <a clrDropdownItem (click)="addGuildClick()">Add New Guild...</a>
+                </clr-dropdown-menu>
+            </clr-dropdown>
+
+            <clr-dropdown *ngIf="activeUser">            
+                <button class="nav-text" clrDropdownTrigger>
+                    <span class="cgb-header-username">{{activeUser}}</span>             
+                    <clr-icon class="cgb-header-user-icon" shape="user"></clr-icon>
+                    <clr-icon shape="caret down"></clr-icon>
+                </button>
+                <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+                    <a clrDropdownItem routerLink="/user/preferences">Preferences</a>
+                    <a clrDropdownItem (click)="logout()">Log out</a>
+                </clr-dropdown-menu>
+            </clr-dropdown>
+        </ng-container>
+
+        <clr-dropdown>            
+            <button class="nav-text" clrDropdownTrigger>
+                <span class="cgb-header-username">{{activeLanguage}}</span>             
+                <clr-icon shape="caret down"></clr-icon>
+            </button>
+            <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">  
+                <a *ngFor="let wh of wowheadUrls" clrDropdownItem (click)="changeLanguage(wh.language)">{{wh.language}}</a>
+            </clr-dropdown-menu>
+        </clr-dropdown>
+    </div>
+</header>
+
+<cgb-add-guild *ngIf="showAddGuildModal && !readonly" (closeRequested)="onAddGuildModalClosed($event)"></cgb-add-guild>

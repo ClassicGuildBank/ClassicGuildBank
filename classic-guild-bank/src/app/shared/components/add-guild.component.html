@@ -1,0 +1,26 @@
+<div class="modal">
+    <div class="modal-dialog" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-label="Close" class="close" type="button" (click)="closeAddGuildModal()">
+                    <clr-icon aria-hidden="true" shape="close"></clr-icon>
+                </button>
+                <h3 class="modal-title">Create New Guild</h3>
+            </div>
+            <div class="modal-body">
+                <form class="clr-form clr-form-horizontal" #addGuildForm="ngForm">
+                    <clr-input-container>
+                        <label>Guild Name</label>
+                        <input clrInput type="text" [(ngModel)]="guildName" name="guildName" required />
+                    </clr-input-container>               
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" (click)="closeAddGuildModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" [disabled]="!addGuildForm.form.valid" (click)="submitAddGuildForm()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-backdrop" aria-hidden="true"></div>

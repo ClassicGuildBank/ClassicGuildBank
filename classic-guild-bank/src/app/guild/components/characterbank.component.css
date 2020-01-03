@@ -1,0 +1,32 @@
+.cgb-character-bank.clr-row
+{
+    justify-content: center;
+}
+
+.cgb-character-bank.clr-row .card .card-block
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.cgb-character-bank.clr-row .card .card-block .item-container
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.cgb-character-bank.clr-row .card .card-block .item-container > span
+{
+    display: flex;    
+    justify-content: center;
+}
+
+.bag-container {
+    display: grid;
+    grid-template-columns: repeat(7, 44px)
+}
+
+.bag-list {
+    display: flex;
+    flex-direction: column;
+}

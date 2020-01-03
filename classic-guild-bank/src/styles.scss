@@ -1,0 +1,80 @@
+.spinner.spinner-inline + span
+{
+    display: inline;
+}
+
+.signup {
+    cursor: pointer;
+}
+
+.clr-select-wrapper select option {
+    color: #e9ecef;
+    background-color: rgb(34, 52, 60);
+}
+
+.pagination-list .pagination-current {
+    color: #adbbc4
+}
+
+.centered-modal {
+    .modal-title {
+        text-align: center;
+    }
+
+    .modal-body{
+        .hint {
+            text-align: center;
+        };
+
+        form.centered-form {
+            label.clr-control-label {
+                display: none;
+            }
+            
+            .clr-form-control {
+                justify-content: center;
+            }
+            
+            .clr-control-container .clr-input-wrapper {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+            }
+            input.clr-input {
+                min-width: 202px;
+            }
+
+            clr-input-container input.clr-input {
+                width: 236px;
+            }
+
+            .clr-subtext {
+                margin-left: calc(calc( 100% - 236px ) / 2);
+            }
+        }
+    }
+}
+
+.money {
+    padding-right: 15px;
+    margin-right: 4px;
+    
+    background-repeat: no-repeat;
+    background-position-y: center;
+}
+
+.copper {
+    background-image: url(https://wow.zamimg.com/images/icons/money-copper.gif);
+}
+
+.silver {
+    background-image: url(https://wow.zamimg.com/images/icons/money-silver.gif);
+}
+
+.gold {
+    background-image: url(https://wow.zamimg.com/images/icons/money-gold.gif);
+}
+
+.error-text {
+    
+}

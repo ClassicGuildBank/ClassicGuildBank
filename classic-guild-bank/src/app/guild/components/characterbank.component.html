@@ -1,0 +1,98 @@
+<div class="cgb-character-bank clr-row">
+    <div class="clr-col-xl-8 clr-col-lg-10 clr-col-md-8 clr-col-sm-10 clr-col-12">
+        <div class="card">
+            <div class="card-header" style="display: flex; flex-direction:row">
+                <span style="flex: 1; align-self: center">{{character.name}}</span>
+                <cgb-money [money]="character"></cgb-money>
+            </div>
+            <div class="card-block" >
+                <div class="clr-row" style="width: 100%">
+
+                    <div class="clr-col-xl-6 clr-col-lg-6 col-md-6 clr-col-12">
+                        <div class="card-title">Bank</div>
+
+                        <!-- Bank -->
+                        <div class="clr-row">
+                            <div class="clr-col-xl-2 clr-col-lg-2 clr-col-md-3 clr-col-sm-2">
+                                <cgb-item [item]="bankBagItem" [size]="'large'" [disableLink]="true"></cgb-item>
+                            </div>
+                            <div class="clr-col-xl-10 clr-col-lg-9 clr-col-md-9 clr-col-sm-9" >
+                                <div class="bag-container">                
+                                    <cgb-item *ngFor="let slot of bank.bagSlots" [item]="slot.item" [quantity]="slot.quantity"></cgb-item>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bank Bags -->
+                        <div *ngFor="let bankBag of bankBags" class="clr-row">
+                            <div class="clr-col-xl-2 clr-col-lg-2 clr-col-md-3 clr-col-sm-2">
+                                <cgb-item [item]="bankBag.bagItem" [size]="'large'"></cgb-item>
+                            </div>
+                            <div class="clr-col-xl-10 clr-col-lg-9 clr-col-md-9 clr-col-sm-9">
+                                <div class="bag-container">                
+                                    <cgb-item *ngFor="let slot of bankBag.bagSlots" [item]="slot.item" [quantity]="slot.quantity"></cgb-item>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clr-col-xl-6 clr-col-lg-6 col-md-6 clr-col-12">
+                        <div class="card-title">Character</div>
+                        <!-- Backpack -->
+                        <div class="clr-row">
+                            <div class="clr-col-xl-2 clr-col-lg-2 clr-col-md-3 clr-col-sm-2">
+                                <cgb-item [item]="backpackItem" [size]="'large'" [disableLink]="true"></cgb-item>
+                            </div>
+                            <div class="clr-col-xl-10 clr-col-lg-9 clr-col-md-9 clr-col-sm-9">
+                                <div class="bag-container">                
+                                    <cgb-item *ngFor="let slot of backpack.bagSlots" [item]="slot.item" [quantity]="slot.quantity"></cgb-item>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Character Bags  -->
+                        <div *ngFor="let charBag of characterBags" class="clr-row">
+                            <div class="clr-col-xl-2 clr-col-lg-2 clr-col-md-3 clr-col-sm-2">
+                                <cgb-item [item]="charBag.bagItem" [size]="'large'"></cgb-item>
+                            </div>
+                            <div class="clr-col-xl-10 clr-col-lg-9 clr-col-md-9 clr-col-sm-9">
+                                <div class="bag-container">                
+                                    <cgb-item *ngFor="let slot of charBag.bagSlots" [item]="slot.item" [quantity]="slot.quantity"></cgb-item>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer" *ngIf="character.lastUpdated || (isGuildOwner && !readonly)">
+                <div style="display: flex; flex-direction:row">
+                    <div style="flex: 1">
+                        <clr-dropdown *ngIf="isGuildOwner && !readonly">
+                            <button class="dropdown-toggle btn btn-sm btn-link" clrDropdownTrigger>
+                                More Actions
+                                <clr-icon shape="caret down"></clr-icon>
+                            </button>
+                            <clr-dropdown-menu *clrIfOpen clrPosition="bottom-right">
+                                <a clrDropdownItem (click)="deleteCharacter()">Delete Character</a>
+                            </clr-dropdown-menu>
+                        </clr-dropdown>
+                    </div>
+                    
+                    <span *ngIf="character.lastUpdated">Updated: {{character.lastUpdated | date:'short'}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="showDeleteCharacterModal">
+    <h3 class="modal-title">Delete Character</h3>
+    <div class="modal-body">
+        <p>Are you sure you wish to delete this character? This cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" (click)="cancelDelete()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="deleteConfirmed()">Ok</button>
+    </div>
+</clr-modal>
+    

@@ -1,0 +1,71 @@
+
+<clr-modal class="centered-modal" [(clrModalOpen)]="showModal" [clrModalClosable]="false">
+    <h3 class="modal-title">Register New User</h3>
+    <div class="modal-body">
+        <h5 class="hint">Fill out the fields below to create an account</h5>
+        <form clrForm [formGroup]="registerForm" class="centered-form">
+            <clr-input-container>
+                <input clrInput type="text" formControlName="username" placeholder="Username"/>                
+                <clr-control-error *ngIf="f.username.errors && f.username.errors.required">
+                    Username is required
+                </clr-control-error>
+            </clr-input-container>               
+        
+            <clr-input-container>
+                <input clrInput type="text" formControlName="email" placeholder="Email"/>
+                <clr-control-error *ngIf="f.email.errors && f.email.errors.required">
+                    Email is required
+                </clr-control-error>
+                <clr-control-error *ngIf="f.email.errors && f.email.errors.email">
+                    Not a valid email address
+                </clr-control-error>
+        
+            </clr-input-container>
+        
+            <clr-password-container>
+                <input clrPassword  type="text" formControlName="password" placeholder="Password"/>
+                <clr-control-error *ngIf="f.password.errors && f.password.errors.required">
+                    Password is Required
+                </clr-control-error>
+                <clr-control-error *ngIf="f.password.errors && f.password.errors.passwordStrength">
+                    Password must be 8 characters and contain uppercase, lowercase and numeric characters
+                </clr-control-error>
+            </clr-password-container>         
+
+            <clr-password-container>
+                <input clrPassword  type="text" formControlName="repeatPassword" placeholder="Confirm Password" />
+                <clr-control-error *ngIf="f.repeatPassword.errors && f.repeatPassword.errors.required">
+                    Password is Required
+                </clr-control-error>
+                <clr-control-error *ngIf="f.repeatPassword.errors && f.repeatPassword.errors.mustMatch">
+                    Passwords must match
+                </clr-control-error>
+            </clr-password-container>
+        </form>
+        <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false">
+            <clr-alert-item>
+                <span class="alert-text">Password must be 8 characters and contain the following: Uppercase, Lowercase, Numeric</span>
+            </clr-alert-item>
+        </clr-alert>
+        <clr-alert *ngIf="errorText" [clrAlertType]="'danger'">
+            <clr-alert-item>
+                <span class="alert-text">{{errorText}}</span>
+            </clr-alert-item>
+        </clr-alert>
+        <clr-alert *ngIf="successText" [clrAlertType]="'success'" [clrAlertClosable]="false">
+            <clr-alert-item>
+                <span class="alert-text">{{successText}}</span>
+            </clr-alert-item>
+        </clr-alert>
+    </div>
+
+    <div class="modal-footer">
+        <ng-container *ngIf="!formSubmitted; else submitted">
+            <button type="button" class="btn btn-outline" (click)="closeRegister()">Cancel</button>
+            <button class="btn btn-primary" type="submit" [disabled]="!registerForm.valid" (click)="onSubmit()">Register</button>
+        </ng-container>
+        <ng-template #submitted>
+            <button type="button" class="btn btn-outline" (click)="closeRegister()">Close</button>
+        </ng-template>
+    </div>
+</clr-modal>
