@@ -664,12 +664,11 @@ namespace ClassicGuildBankData.Repositories
             if (guild == null)
                 return false;
 
-            return guild.UserId == userId;
+            if (guild.UserId == userId)
+                return true;
 
-            //if (guild.UserId == userId)
-            //    return true;
-
-            //return guild.GuildMembers.Any(m => m.UserId == userId && m.CanUpload);
+            //maybe make this a separate setting in the future?
+            return guild.GuildMembers.Any(m => m.UserId == userId && m.CanUpload);
         }
 
         #endregion
