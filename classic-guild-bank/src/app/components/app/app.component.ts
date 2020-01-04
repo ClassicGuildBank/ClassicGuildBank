@@ -68,7 +68,9 @@ export class AppComponent implements OnInit {
     this.guildStore.guild$.subscribe( (guild) => {
       var isGuildOwner = guild != null && guild.userIsOwner;
       var userCanUpload = guild != null && guild.userCanUpload;
-      var userCanProcessItemRequests = guild != null && guild.userIsOwner; //guild.userCanProcessItemRequests
+
+      //TODO: Make this a separate setting? Stick with upload permissions for now.
+      var userCanProcessItemRequests = guild != null && (guild.userIsOwner || guild.userCanUpload); //guild.userCanProcessItemRequests 
 
       this._isGuildOwner.next(isGuildOwner);
       this._userCanUpload.next(userCanUpload);
