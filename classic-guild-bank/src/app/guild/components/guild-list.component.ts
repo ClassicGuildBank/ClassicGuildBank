@@ -16,15 +16,15 @@ export class GuildListComponent implements OnInit {
 
   @Input() guild: Guild;
   @Input() characters$: Observable<Character[]>;
-  
+
   listData$: Observable<ListItem[]>;
   filteredData: ListItem[] = [];
-  
+
   public classComparator = new ItemClassComparator();
   public subclassComparator = new ItemSubClassComparator();
   public nameComparator = new ItemNameComparator();
   public quantityComparator = new ItemQuantityComparator();
-  
+
   public guildMoney = {
     gold: 0,
     get goldAmt() { return Math.floor(this.gold / 10000) },
@@ -37,36 +37,33 @@ export class GuildListComponent implements OnInit {
   ngOnInit() {
 
     this.listData$ = this.characters$.pipe(map(characters => {
-      
+
       const itemList: ListItem[] = [];
       this.guildMoney.gold = 0;
 
-      characters.map( c => {
+      characters.map(c => {
         this.guildMoney.gold += c.gold;
 
-        return c.bags.map( b => b.bagSlots.map(bs => {
-          if( !bs.item )
-              return;
+        return c.bags.map(b => b.bagSlots.map(bs => {
+          if (!bs.item) return;
 
-            const index = itemList.findIndex( l => l.item.id === bs.item.id );
-            let listItem: ListItem;
-            if( index < 0 )
-            {
-              listItem = new ListItem(bs.item);
-              itemList.push(listItem);
-            }
-            else
-              listItem = itemList[index];
+          const index = itemList.findIndex(l => l.item.id === bs.item.id);
+          let listItem: ListItem;
+          if (index < 0) {
+            listItem = new ListItem(bs.item);
+            itemList.push(listItem);
+          } else {
+            listItem = itemList[index];
+          }
 
-            listItem.quantity += bs.quantity
-            listItem.contributions[c.name] = bs.quantity;
-
-        }))
-      })
+          listItem.quantity += bs.quantity;
+          listItem.contributions[c.name] ? listItem.contributions[c.name] += bs.quantity : listItem.contributions[c.name] = bs.quantity;
+        }));
+      });
 
       return itemList;
     }));
-    
+
   }
 
   onFiltered(data: ListItem[]) {
