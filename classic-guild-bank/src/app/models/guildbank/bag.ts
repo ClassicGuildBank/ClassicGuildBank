@@ -5,12 +5,12 @@ export class Bag {
     public id: number;
     public characterId: number;
     public isBank: boolean;
-    
+    public bagContainerId: number;
     public bagItem?: Item;
     public bagSlots: BagSlot[];
 
     constructor(init?: Partial<Bag>) {
-        if( init ) {
+        if (init) {
             Object.assign(this, init);
         }
     }

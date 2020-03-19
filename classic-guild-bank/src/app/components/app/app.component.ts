@@ -40,13 +40,13 @@ export class AppComponent implements OnInit {
 
   public showImportFromAddonModal = false;
 
-  constructor (
+  constructor(
     private vcr: ViewContainerRef,
     private userStore: UserStore,
     private router: Router,
     private guildStore: GuildStore,
     private modalService: ModalService,
-  ){
+  ) {
 
     this.authorized$ = this.userStore.isLoggedIn$;
     this.router.events.subscribe((event) => {
@@ -61,11 +61,11 @@ export class AppComponent implements OnInit {
     this.modalService.setRootViewContainerRef(this.vcr);
     this.loggedInUser = this.userStore.getLoggedInUser();
 
-    this.authorized$.subscribe( (authorized) => {
+    this.authorized$.subscribe((authorized) => {
       this.updateGuilds(authorized);
     });
-    
-    this.guildStore.guild$.subscribe( (guild) => {
+
+    this.guildStore.guild$.subscribe((guild) => {
       var isGuildOwner = guild != null && guild.userIsOwner;
       var userCanUpload = guild != null && guild.userCanUpload;
 
@@ -79,7 +79,7 @@ export class AppComponent implements OnInit {
       this.guildStore.getItemRequests().subscribe();
     });
 
-    this.guildStore.itemRequests$.subscribe((itemRequests) => { 
+    this.guildStore.itemRequests$.subscribe((itemRequests) => {
       var itemRequestCount = itemRequests.filter(itemRequest => itemRequest.status == "Pending").length;
 
       this._itemRequestCount.next(itemRequestCount);
@@ -87,7 +87,7 @@ export class AppComponent implements OnInit {
   }
 
   public onError(error: string) {
-    this.modalService.openModal(ErrorComponent, {message: error});
+    this.modalService.openModal(ErrorComponent, { message: error });
   }
 
   public onImportFromAddonClicked() {
@@ -103,13 +103,13 @@ export class AppComponent implements OnInit {
   }
 
   private updateGuilds(authorized) {
-    if(!authorized){
+    if (!authorized) {
       this.guildStore.clearGuilds();
       return;
     }
 
-    this.guildStore.getGuilds().subscribe({        
-        error: () => this.onError("Unable to Get Guilds")
+    this.guildStore.getGuilds().subscribe({
+      error: () => this.onError("Unable to Get Guilds")
     });
   }
 }
