@@ -4,14 +4,16 @@ using ClassicGuildBankData.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ClassicGuildBankData.Migrations
 {
     [DbContext(typeof(ClassicGuildBankDbContext))]
-    partial class ClassicGuildBankDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200327172510_BagContainerId_Notes")]
+    partial class BagContainerId_Notes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

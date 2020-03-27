@@ -227,8 +227,7 @@ namespace ClassicGuildBankData.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     ItemId = table.Column<int>(nullable: true),
                     CharacterId = table.Column<Guid>(nullable: false),
-                    isBank = table.Column<bool>(nullable: false),
-                    BagContainerId = table.Column<int>(nullable: false)
+                    isBank = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -253,8 +252,7 @@ namespace ClassicGuildBankData.Migrations
                 {
                     SlotId = table.Column<int>(nullable: false),
                     BagId = table.Column<Guid>(nullable: false),
-                    ItemId = table.Column<int>(nullable: true),
-                    Notes = table.Column<string>(nullable: true)
+                    ItemId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
