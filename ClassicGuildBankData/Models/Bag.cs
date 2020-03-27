@@ -19,13 +19,15 @@ namespace ClassicGuildBankData.Models
         public int? ItemId { get; set; }
 
         [JsonIgnore]
-        public Guid CharacterId{ get; set; }
+        public Guid CharacterId { get; set; }
 
         [NotMapped]
         [JsonProperty("characterId")]
         public string _CharacterId { get => CharacterId.ToString(); set => CharacterId = new Guid(value); }
 
         public bool isBank { get; set; }
+
+        public int BagContainerId { get; set; }
 
         private List<BagSlot> _bagSlots;
         public List<BagSlot> BagSlots
@@ -47,5 +49,15 @@ namespace ClassicGuildBankData.Models
 
         [JsonIgnore]
         public Character Character { get; set; }
+
+        #region Constructor
+
+        public override string ToString()
+        {
+            return "Id: " + Id + "; ItemId: " + ItemId + "; BagContainerId: " + BagContainerId + "; isBank: " + isBank;
+        }
+
+        #endregion
+
     }
 }

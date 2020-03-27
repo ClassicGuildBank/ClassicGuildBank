@@ -8,7 +8,7 @@ namespace ClassicGuildBankData.Tools
 {
     public class BagItemImportModel
     {
-        #region Propertiesa
+        #region Properties
 
         private readonly int _bagslot;
         public int BagSlot

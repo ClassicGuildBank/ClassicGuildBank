@@ -20,13 +20,12 @@ export class ImportFromAddonComponent implements OnInit {
 
   public uploadingImportString: boolean = false;
 
-  @ViewChild(ClrForm, {static: false} ) clrForm : ClrForm;
+  @ViewChild(ClrForm, { static: false }) clrForm: ClrForm;
 
-  constructor(     
+  constructor(
     private formBuilder: FormBuilder,
     private guildStore: GuildStore
-  ) {     
-  }
+  ) { }
 
   ngOnInit() {
     this.addonImportForm = this.formBuilder.group({
@@ -34,7 +33,7 @@ export class ImportFromAddonComponent implements OnInit {
     });
   }
 
-  public closeImportAddonModal() {       
+  public closeImportAddonModal() {
     this.closeRequested.emit(null);
   }
 
@@ -49,13 +48,13 @@ export class ImportFromAddonComponent implements OnInit {
     this.uploadingImportString = true;
 
     this.guildStore.uploadImportString(this.addonImportForm.value.importText).subscribe({
-      next: () =>{
+      next: () => {
         this.closeImportAddonModal();
         this.uploadingImportString = false;
         this.onImportStringUploaded.emit(null);
-      }, 
+      },
       error: (errorResponse) => {
-        console.error( errorResponse.error );
+        console.error(errorResponse.error);
         this.errorText = errorResponse.error.errorMessage;
         this.uploadingImportString = false;
       }

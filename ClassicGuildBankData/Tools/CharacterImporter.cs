@@ -106,8 +106,8 @@ namespace ClassicGuildBankData.Tools
                     Id = Guid.NewGuid(),
                     isBank = i == 0 || i > 5,
                     CharacterId = character.Id,
-                    ItemId = itemId
-                    //ContainerId
+                    ItemId = itemId,
+                    BagContainerId = Int32.Parse(bagImportModel.Container)
                 };
 
                 foreach( var bagItemImportModel in bagImportModel.BagItemImportModels )

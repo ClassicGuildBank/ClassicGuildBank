@@ -16,11 +16,11 @@ export class GuildComponent {
     public guildsLoading$: Observable<boolean>;
 
     public showAddGuildModal = false;
-    
+
     constructor(
-        private guildStore: GuildStore      
-    ) {      
-        this.guild$ = this.guildStore.guild$;  
+        private guildStore: GuildStore
+    ) {
+        this.guild$ = this.guildStore.guild$;
         this.guildsLoading$ = this.guildStore.guildsLoading$;
         this.charactersLoading$ = this.guildStore.charactersLoading$;
     }
@@ -29,9 +29,7 @@ export class GuildComponent {
         this.showAddGuildModal = true;
     }
 
-    public onAddGuildModalClosed() {       
+    public onAddGuildModalClosed() {
         this.showAddGuildModal = false;
     }
 }
-
-  

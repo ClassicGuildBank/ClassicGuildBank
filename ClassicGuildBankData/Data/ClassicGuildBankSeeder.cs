@@ -127,7 +127,8 @@ namespace ClassicGuildBankData.Data
                 _CharacterId = fc1Id,
                 _Id = "F5091DD3-A11F-4864-A6DF-2A78594A90A9",
                 isBank = true,
-                BagSlots = new List<BagSlot>()
+                BagSlots = new List<BagSlot>(),
+                BagContainerId = -1
             };
 
             var bb1 = new Bag()
@@ -136,6 +137,7 @@ namespace ClassicGuildBankData.Data
                 _Id = "D69A53A8-BA4D-4FEA-94CE-61CE613D00F6",
                 isBank = true,
                 BagSlots = new List<BagSlot>(),
+                BagContainerId = 5,
                 BagItem = _dbContext.Items.FirstOrDefault(i => i.Id == 17966)
             };
 
@@ -143,6 +145,7 @@ namespace ClassicGuildBankData.Data
             {
                 _CharacterId = fc1Id,
                 _Id = "484D54A0-77DF-4446-AC56-430CC049042F",
+                BagContainerId = 0,
                 BagSlots = new List<BagSlot>()
             };
 
