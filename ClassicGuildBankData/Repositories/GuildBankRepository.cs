@@ -183,7 +183,7 @@ namespace ClassicGuildBankData.Repositories
                 _classicGuildBankDbContext.Characters.Remove(existingCharacter);
 
             _classicGuildBankDbContext.Characters.Add(character);
-
+            
             _classicGuildBankDbContext.SaveChanges();
         }
 

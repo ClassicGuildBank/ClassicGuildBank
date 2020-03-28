@@ -15,35 +15,36 @@ export class CharacterBankComponent implements OnInit {
     @Input() character: Character;
     @Input() isGuildOwner: Boolean;
     @Input() readonly: boolean = false;
-    
-    public bankBagItem: Item = new Item({icon: 'achievement_guildperk_mobilebanking'})
-    public backpackItem: Item = new Item({icon: 'inv_misc_bag_08'})
+
+    public bankBagItem: Item = new Item({ icon: 'achievement_guildperk_mobilebanking' })
+    public backpackItem: Item = new Item({ icon: 'inv_misc_bag_08' })
 
     public showDeleteCharacterModal = false;
 
     get bank(): Bag {
-        return this.character.bags.find( b => b.isBank && !b.bagItem);
+        return this.character.bags.find(b => b.isBank && !b.bagItem);
     }
 
     get bankBags(): Bag[] {
-        return this.character.bags.filter( b => b.isBank && b.bagItem);
+        return this.character.bags.filter(b => b.isBank && b.bagItem).sort((a, b) => (a.bagContainerId > b.bagContainerId) ? 1 : -1);
     }
 
     get backpack(): Bag {
-        return this.character.bags.find( b => !b.isBank && !b.bagItem );
+        return this.character.bags.find(b => !b.isBank && !b.bagItem);
     }
 
     get characterBags(): Bag[] {
-        return this.character.bags.filter( b=> !b.isBank && b.bagItem);
+        return this.character.bags.filter(b => !b.isBank && b.bagItem).sort((a, b) => (a.bagContainerId > b.bagContainerId) ? 1 : -1);
     }
 
     constructor(
         private guildStore: GuildStore,
-        private modalService: ModalService     
-    ) {        
-    }
+        private modalService: ModalService
+    ) { }
 
     ngOnInit() {
+        console.log(this.bankBags);
+        console.log(this.characterBags);
     }
 
     public deleteCharacter() {
@@ -59,7 +60,7 @@ export class CharacterBankComponent implements OnInit {
             next: () => {
                 this.showDeleteCharacterModal = false;
             },
-            error: () => this.modalService.openModal(ErrorComponent, {message:"Unable to Delete Character"})
+            error: () => this.modalService.openModal(ErrorComponent, { message: "Unable to Delete Character" })
         });
     }
 }

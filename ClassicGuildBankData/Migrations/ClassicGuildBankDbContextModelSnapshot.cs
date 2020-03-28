@@ -24,6 +24,8 @@ namespace ClassicGuildBankData.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("BagContainerId");
+
                     b.Property<Guid>("CharacterId");
 
                     b.Property<int?>("ItemId");

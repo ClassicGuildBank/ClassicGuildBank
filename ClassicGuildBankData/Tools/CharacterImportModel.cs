@@ -123,11 +123,15 @@ namespace ClassicGuildBankData.Tools
 
         #region Private Methods
 
+        // private void AddBags(BagImportModel[] bags)
         private void AddBags(string[] bags)
         {
-            for (int i = 0; i < bags.Count(); i++)
+            for (var i = 0; i < bags.Length; i++)
             {
-                BagImportModels.Add(new BagImportModel(bags[++i]));
+                if (i % 2 == 1)
+                {
+                    BagImportModels.Add(new BagImportModel(bags[i - 1], bags[i]));
+                }
             }
         }
 
@@ -142,9 +146,9 @@ namespace ClassicGuildBankData.Tools
                     Int32.Parse(item[3])
                 );
 
-                var containerSlot = Int32.Parse(item[0]);
+                var containerSlot = Int32.Parse(item[0]) + 1;
 
-                BagImportModels[containerSlot + 1].BagItemImportModels.Add(bagItemImportModel);
+                BagImportModels[containerSlot].BagItemImportModels.Add(bagItemImportModel);
             }
         }
 

@@ -30,13 +30,21 @@ namespace ClassicGuildBankData.Tools
                 return _bagName;
             }
         }
-
+        private readonly string _container;
+        public string Container
+        {
+            get
+            {
+                return _container;
+            }
+        }
         #endregion
 
         #region Constructor
 
-        public BagImportModel( string bagName )
+        public BagImportModel(string container, string bagName)
         {
+            _container = container;
             _bagName = bagName;
         }
 
