@@ -1,4 +1,3 @@
-
 <div class="clr-row">
     <div class="clr-offset-lg-4 clr-col-lg-4 clr-offset-md-3 clr-col-md-6 clr-col-12">
         <h3>User Preferences</h3>
@@ -12,12 +11,14 @@
                     <clr-dg-column>Guild Name</clr-dg-column>
                     <clr-dg-column>Display Name</clr-dg-column>
                     <clr-dg-column>Guild Owner</clr-dg-column>
-                    
+
                     <clr-dg-placeholder>You do not currently belong to any guilds</clr-dg-placeholder>
 
-                    <clr-dg-row *clrDgItems="let guildMember of guildMembership$ | async; let i = index;" [attr.data-index]="i">
+                    <clr-dg-row *clrDgItems="let guildMember of guildMembership$ | async; let i = index;"
+                        [attr.data-index]="i">
                         <clr-dg-action-overflow>
-                            <button class="action-item" (click)="onChangeDisplayName(guildMember)">Change Display Name</button>
+                            <button class="action-item" (click)="onChangeDisplayName(guildMember)">Change Display
+                                Name</button>
                             <button class="action-item" (click)="onLeaveGuild(guildMember)">Leave Guild</button>
                         </clr-dg-action-overflow>
 
@@ -50,10 +51,23 @@
                         </clr-dg-cell> -->
                         <clr-dg-cell>{{guildMember.displayName}}</clr-dg-cell>
                         <clr-dg-cell>{{guildMember.isOwner ? 'Yes' : ''}}</clr-dg-cell>
-                    </clr-dg-row>            
+                    </clr-dg-row>
                 </clr-datagrid>
             </div>
-        </div> 
+        </div>
+        <div class="card">
+            <div class="card-header" style="display: flex; flex-direction:row">
+                API Token
+            </div>
+            <div class="card-body token-body">
+                <button class="btn token-btn" [ngClass]="isTokenRevealed ? 'btn-outline' : 'btn-primary'" (click)="isTokenRevealed = !isTokenRevealed">
+                    {{isTokenRevealed ? 'Close' : 'Reveal'}}
+                </button>
+                <div class="token-content" *ngIf="isTokenRevealed">
+                    {{token}}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -64,12 +78,13 @@
             <clr-input-container>
                 <label>Display Name</label>
                 <input clrInput type="text" [(ngModel)]="displayNameForRename" name="displayName" required />
-            </clr-input-container>               
+            </clr-input-container>
         </form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-outline" (click)="cancelChangeDisplayName()">Cancel</button>
-        <button type="button" class="btn btn-primary" [disabled]="!changeDisplayNameForm.form.valid" (click)="submitChangeDisplayNameForm()">Ok</button>
+        <button type="button" class="btn btn-primary" [disabled]="!changeDisplayNameForm.form.valid"
+            (click)="submitChangeDisplayNameForm()">Ok</button>
     </div>
 </clr-modal>
 

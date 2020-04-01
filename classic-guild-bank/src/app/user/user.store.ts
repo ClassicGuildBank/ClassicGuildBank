@@ -71,13 +71,13 @@ import { Observable, BehaviorSubject } from "rxjs";
         this._isLoggedIn.next(true);
       }));
     }
+    
+    public getToken(): string {
+        return localStorage.getItem(TOKEN_NAME);
+    }
 
     private clearToken(): void {
         localStorage.removeItem(TOKEN_NAME);
-    }
-
-    private getToken(): string {
-        return localStorage.getItem(TOKEN_NAME);
     }
 
     private setToken(token: string): void {
