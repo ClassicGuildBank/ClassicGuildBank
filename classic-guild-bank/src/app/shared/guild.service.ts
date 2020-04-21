@@ -218,6 +218,6 @@ export class GuildService {
 
             characters.push(char);
         });
-        return characters;
+        return characters.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime());
     }
 }
