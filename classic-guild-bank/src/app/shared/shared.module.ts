@@ -12,6 +12,7 @@ import { ItemComponent } from './components/item.component';
 import { MoneyComponent } from './money.component';
 import { ListFilterComponent } from './components/list-filter.component';
 import { GuildLoadingComponent } from './components/guild-loading.component';
+import { DonateComponent } from './components/donate.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { GuildLoadingComponent } from './components/guild-loading.component';
     ItemComponent,
     MoneyComponent,
     ListFilterComponent,
-    GuildLoadingComponent
+    GuildLoadingComponent,
+    DonateComponent
   ],
   imports: [
     CommonModule,
@@ -46,6 +48,7 @@ import { GuildLoadingComponent } from './components/guild-loading.component';
   ],
   entryComponents: [
     // CartComponent
+    DonateComponent
   ]
 })
 export class SharedModule { }
