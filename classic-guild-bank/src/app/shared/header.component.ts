@@ -9,6 +9,8 @@ import { Guild } from '../models/guildbank/guild';
 import * as configuration from '../../config/appconfig.json';
 import { LANGUAGE_PREFERENCE } from './constants';
 import { windowToggle } from 'rxjs/operators';
+import { ModalService } from '../core/modal.service';
+import { DonateComponent } from './components/donate.component';
 
 
 @Component({
@@ -34,7 +36,8 @@ export class HeaderComponent implements OnInit {
     constructor(
         private userStore: UserStore,
         private guildStore: GuildStore,
-        private router: Router
+        private router: Router,
+        private modalService: ModalService
     ) {        
     }
 
@@ -76,6 +79,12 @@ export class HeaderComponent implements OnInit {
 
     public onAddGuildModalClosed() {       
         this.showAddGuildModal = false;
+    }
+
+    public toggleDonate(show: boolean) {
+        if(show) {
+            this.modalService.openModal(DonateComponent);
+        }
     }
 
     public getPatreonOAuthLink() {
