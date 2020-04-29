@@ -1,3 +1,14 @@
 .datagrid-cell .clr-form-control {
     margin-top: 0px;
 }
+
+.token-btn {
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 90px;
+}
+
+.token-content {
+    padding: 10px;
+    word-wrap: break-word;
+}

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { ModalService } from '../core/modal.service';
 import { ErrorComponent } from '../shared/components/error.component';
 import * as config from '../../config/appconfig.json';
+import { UserStore } from './user.store';
 
 @Component({
   selector: 'cgb-preferences',
@@ -19,12 +20,16 @@ export class PreferencesComponent implements OnInit {
   public showLeaveGuildModal = false;
   public leavingGuildMember: GuildMembership;
   public wowheadUrls = [];
+  public isTokenRevealed = false;
+  public readonly token: string;
 
   constructor(
     private guildStore: GuildStore,
     private modalService: ModalService,
+    private readonly userStore: UserStore
   ) {
     this.guildMembership$ = this.guildStore.guildMembership$;     
+    this.token = userStore.getToken();
   }
 
   ngOnInit() {
