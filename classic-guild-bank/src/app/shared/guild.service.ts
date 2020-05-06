@@ -180,7 +180,7 @@ export class GuildService {
     }
 
     private createCharacters(items: any[]): Character[] {
-        const characters = [];
+        const characters: Character[] = [];
         let lang = localStorage.getItem(LANGUAGE_PREFERENCE);
         let nameField = "name";
         if(lang && lang != "en") {
@@ -218,6 +218,21 @@ export class GuildService {
 
             characters.push(char);
         });
-        return characters.sort((a, b) => b.lastUpdated.getTime() - a.lastUpdated.getTime());
+
+        return characters.sort( (a: Character, b: Character) => {
+            if(!a.lastUpdated) {
+                if(b.lastUpdated) {
+                    return -1;
+                }
+
+                return 0;
+            }
+
+            if(!b.lastUpdated) {
+                return 1;
+            }
+
+            return a.lastUpdated.getTime() - b.lastUpdated.getTime();
+        })
     }
 }
