@@ -2,10 +2,12 @@ import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { UserStore } from 'src/app/user/user.store';
 import { Observable, BehaviorSubject, forkJoin } from 'rxjs';
 
-import { Router, NavigationStart } from '@angular/router';
+import { Router, NavigationStart, NavigationEnd } from '@angular/router';
 import { GuildStore } from 'src/app/shared/guild.store';
 import { ModalService } from 'src/app/core/modal.service';
 import { ErrorComponent } from 'src/app/shared/components/error.component';
+
+declare let gtag: Function;
 
 @Component({
   selector: 'app-root',
@@ -53,6 +55,13 @@ export class AppComponent implements OnInit {
       if (event instanceof NavigationStart) {
         this._isLoginPage.next(event.url.startsWith("/user/login"));
         this._isReadonly.next(event.url.startsWith("/guild/readonly"))
+      }
+
+      if(event instanceof NavigationEnd) {
+        gtag('event', 'page_view', {
+          page_path: event.urlAfterRedirects,
+          page_location: event.urlAfterRedirects,
+        });
       }
     });
   }
