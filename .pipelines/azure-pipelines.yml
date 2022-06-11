@@ -9,11 +9,12 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+stages:
+- stage: Infrastructure
+  jobs:
+  - job: Plan
+    steps:
+    - script: |
+        export TF_VAR_sql_admin_password=$(SQL_ADMIN_PASSWORD)
+        mkdir "$(Build.StagingDirectory)/terraform-plans"
+        terraform plan -out "$(Build.StagingDirectory)/terraform-plans/tf.plan"
