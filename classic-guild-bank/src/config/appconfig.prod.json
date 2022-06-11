@@ -1,5 +1,5 @@
 { 
-  "api": "https://classicguildbankapi.azurewebsites.net/api",
+  "api": "https://classicguildbank-apim.azure-api.net/api",
   "client": "https://classicguildbank.com",
   "patreon": {
     "oauth_redirect": "https://classicguildbank.com/patreon/callback",
