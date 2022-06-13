@@ -41,6 +41,13 @@ stages:
         environmentServiceNameAzureRM: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
       env:
         TF_VAR_sql_admin_password: $(SQL_ADMIN_PASSWORD)
+    - task: AzureCLI@2
+      name: "AzLogin"
+      inputs:
+        azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az login'
     - task: TerraformTaskV3@3
       name: "TerraformApply"
       inputs:
