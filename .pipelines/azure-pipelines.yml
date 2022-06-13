@@ -23,6 +23,7 @@ stages:
     - script: |
         mkdir "$(Build.StagingDirectory)/terraform-plans"
     - task: TerraformTaskV3@3
+      name: "TerraformInit"
       inputs:
         provider: 'azurerm'
         command: 'init'
@@ -32,6 +33,7 @@ stages:
         backendAzureRmContainerName: 'terraform'
         backendAzureRmKey: '$(ArmAccessKey)'
     - task: TerraformTaskV3@3
+      name: "TerraformPlan"
       inputs:
         provider: 'azurerm'
         command: 'plan'
