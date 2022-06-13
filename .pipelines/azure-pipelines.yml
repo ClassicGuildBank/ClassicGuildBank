@@ -35,7 +35,9 @@ stages:
         ARM_CLIENT_SECRET: $(ArmClientSecret)
         ARM_SUBSCRIPTION_ID: $(ArmSubscriptionId)
         ARM_TENANT_ID: $(ArmTenantId)
-    - script: terraform apply "$(Build.StagingDirectory)/terraform-plans/tf.plan"
+    - script: az login --service-principal -u $(ArmClientId) -p $(ArmClientSecret) --tenant $(ArmTenantId)
+      displayName: "AZ Login"
+    - script: terraform apply -input=false "$(Build.StagingDirectory)/terraform-plans/tf.plan"
       displayName: "Terraform Apply"
       env:        
         ARM_ACCESS_KEY: $(ArmAccessKey)
