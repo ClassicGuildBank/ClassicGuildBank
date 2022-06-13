@@ -23,4 +23,5 @@ stages:
     - script: |
         export TF_VAR_sql_admin_password=$(SQL_ADMIN_PASSWORD)
         mkdir "$(Build.StagingDirectory)/terraform-plans"
+        terraform init
         terraform plan -out "$(Build.StagingDirectory)/terraform-plans/tf.plan"
