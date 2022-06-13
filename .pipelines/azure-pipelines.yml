@@ -29,6 +29,7 @@ stages:
     - script: terraform plan -out "$(Build.StagingDirectory)/terraform-plans/tf.plan"
       displayName: "Terraform Plan"
       env:
+        TF_VAR_sql_admin_password: $(SQL_ADMIN_PASSWORD)
         ARM_ACCESS_KEY: $(ArmAccessKey)
         ARM_CLIENT_ID: $(ArmClientId)
         ARM_CLIENT_SECRET: $(ArmClientSecret)
