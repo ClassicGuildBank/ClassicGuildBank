@@ -19,28 +19,9 @@ stages:
         azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
         KeyVaultName: 'kmxTerraformKeyVault'
         SecretsFilter: '*'
-        RunAsPreJob: true
+        RunAsPreJob: true 
     - script: |
         mkdir "$(Build.StagingDirectory)/terraform-plans"
-    - task: AzureCLI@2
-      name: "TerraformPlan"
-      inputs:
-        azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          terraform init
-          terraform plan -out "$(Build.StagingDirectory)/terraform-plans/tf.plan"
+        terraform init
       env:
-        TF_VAR_sql_admin_password: $(SQL_ADMIN_PASSWORD)
-    - task: AzureCLI@2
-      name: "TerraformApply"
-      condition: 
-      inputs:
-        azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |    
-          terraform apply "$(Build.StagingDirectory)/terraform-plans/tf.plan"
-      
-   
+        ARM_ACCESS_KEY: $(ArmAccessKey)
