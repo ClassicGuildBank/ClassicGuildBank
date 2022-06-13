@@ -21,7 +21,6 @@ stages:
         SecretsFilter: '*'
         RunAsPreJob: true
     - script: |
-        export TF_VAR_sql_admin_password=$(SQL_ADMIN_PASSWORD)
         mkdir "$(Build.StagingDirectory)/terraform-plans"
     - task: TerraformTaskV3@3
       inputs:
@@ -38,3 +37,5 @@ stages:
         command: 'plan'
         commandOptions: '-out "$(Build.StagingDirectory)/terraform-plans/tf.plan"'
         environmentServiceNameAzureRM: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
+      env:
+        TF_VAR_sql_admin_password: $(SQL_ADMIN_PASSWORD)
