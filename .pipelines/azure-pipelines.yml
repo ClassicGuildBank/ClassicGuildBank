@@ -22,39 +22,25 @@ stages:
         RunAsPreJob: true
     - script: |
         mkdir "$(Build.StagingDirectory)/terraform-plans"
-    - task: TerraformTaskV3@3
-      name: "TerraformInit"
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        backendServiceArm: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
-        backendAzureRmResourceGroupName: 'TerraformPrereqs'
-        backendAzureRmStorageAccountName: 'kmxterraformbackend'
-        backendAzureRmContainerName: 'terraform'
-        backendAzureRmKey: '$(ArmAccessKey)'
-    - task: TerraformTaskV3@3    
-      name: "TerraformPlan"
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        commandOptions: '-out "$(Build.StagingDirectory)/terraform-plans/tf.plan"'
-        environmentServiceNameAzureRM: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
-      env:
-        TF_VAR_sql_admin_password: $(SQL_ADMIN_PASSWORD)
     - task: AzureCLI@2
-      name: "AzLogin"
+      name: "TerraformPlan"
       inputs:
         azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        inlineScript: 'az login'
-    - task: TerraformTaskV3@3
+        inlineScript: |
+          terraform init
+          terraform plan -out "$(Build.StagingDirectory)/terraform-plans/tf.plan"
+      env:
+        TF_VAR_sql_admin_password: $(SQL_ADMIN_PASSWORD)
+    - task: AzureCLI@2
       name: "TerraformApply"
+      condition: 
       inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        commandOptions: '$(Build.StagingDirectory)/terraform-plans/tf.plan'
-        environmentServiceNameAzureRM: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
-
+        azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |    
+          terraform apply "$(Build.StagingDirectory)/terraform-plans/tf.plan"
       
    
