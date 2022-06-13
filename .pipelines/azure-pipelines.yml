@@ -23,5 +23,18 @@ stages:
     - script: |
         export TF_VAR_sql_admin_password=$(SQL_ADMIN_PASSWORD)
         mkdir "$(Build.StagingDirectory)/terraform-plans"
-        terraform init
-        terraform plan -out "$(Build.StagingDirectory)/terraform-plans/tf.plan"
+    - task: TerraformTaskV3@3
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
+        backendAzureRmResourceGroupName: 'TerraformPrereqs'
+        backendAzureRmStorageAccountName: 'kmxterraformbackend'
+        backendAzureRmContainerName: 'terraform'
+        backendAzureRmKey: '$(ArmAccessKey)'
+    - task: TerraformTaskV3@3
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-out "$(Build.StagingDirectory)/terraform-plans/tf.plan"'
+        environmentServiceNameAzureRM: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
