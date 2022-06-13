@@ -35,3 +35,11 @@ stages:
         ARM_CLIENT_SECRET: $(ArmClientSecret)
         ARM_SUBSCRIPTION_ID: $(ArmSubscriptionId)
         ARM_TENANT_ID: $(ArmTenantId)
+    - script: terraform apply "$(Build.StagingDirectory)/terraform-plans/tf.plan"
+      displayName: "Terraform Apply"
+      env:        
+        ARM_ACCESS_KEY: $(ArmAccessKey)
+        ARM_CLIENT_ID: $(ArmClientId)
+        ARM_CLIENT_SECRET: $(ArmClientSecret)
+        ARM_SUBSCRIPTION_ID: $(ArmSubscriptionId)
+        ARM_TENANT_ID: $(ArmTenantId)
