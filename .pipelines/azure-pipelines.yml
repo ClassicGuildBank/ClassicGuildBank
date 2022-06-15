@@ -12,7 +12,7 @@ pool:
 stages:
 - stage: Infrastructure
   jobs:
-  - job: Plan
+  - job: Terraform
     steps:
     - task: AzureKeyVault@2
       inputs:
@@ -35,8 +35,8 @@ stages:
         ARM_CLIENT_SECRET: $(ArmClientSecret)
         ARM_SUBSCRIPTION_ID: $(ArmSubscriptionId)
         ARM_TENANT_ID: $(ArmTenantId)
-    - script: az login --service-principal -u $(ArmClientId) -p $(ArmClientSecret) --tenant $(ArmTenantId)
-      displayName: "AZ Login"
+        AWS_ACCESS_KEY: $(AwsAccessKey)
+        AWS_SECRET_ACCESS_KEY: $(AwsSecretAccesskey)
     - script: terraform apply -input=false "$(Build.StagingDirectory)/terraform-plans/tf.plan"
       displayName: "Terraform Apply"
       env:        
@@ -45,3 +45,83 @@ stages:
         ARM_CLIENT_SECRET: $(ArmClientSecret)
         ARM_SUBSCRIPTION_ID: $(ArmSubscriptionId)
         ARM_TENANT_ID: $(ArmTenantId)
+        AWS_ACCESS_KEY: $(AwsAccessKey)
+        AWS_SECRET_ACCESS_KEY: $(AwsSecretAccesskey)
+- stage: Build
+  jobs:
+  - job: BuildApi
+    steps:
+    - task: DotNetCoreCLI@2
+      displayName: "dotnet restore"
+      inputs:
+        command: 'restore'
+        projects: |
+          **/ClassicGuildBankData.csproj
+          **/ClassicGuildBankApi.csproj
+        feedsToUse: 'select'
+    - task: DotNetCoreCLI@2
+      displayName: "dotnet build"
+      inputs:
+        command: 'build'
+        projects: |
+          **/ClassicGuildBankData.csproj
+          **/ClassicGuildBankApi.csproj
+        arguments: '--configuration $(BuildConfiguration)'
+    - task: DotNetCoreCLI@2
+      displayName: "dotnet build"
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        projects: |
+          **/ClassicGuildBankData.csproj
+          **/ClassicGuildBankApi.csproj
+        arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)'
+        zipAfterPublish: false
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish dotnet Artifacts"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+  - job: BuildClient
+    steps:
+    - task: Npm@1
+      displayName: "npm install"
+      inputs:
+        command: 'install'
+        workingDir: 'classic-guild-bank'
+    - task: Npm@1
+      displayName: "npm build"
+      inputs:
+        command: 'custom'
+        workingDir: 'classic-guild-bank'
+        customCommand: 'run-script build-prod'
+    - task: PublishBuildArtifacts@1
+      displayName: "Publish Client Artifacts"
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/classic-guild-bank/dist'
+        ArtifactName: 'dist'
+        publishLocation: 'Container'
+- stage: Deploy
+  dependsOn: Build
+  jobs:
+  - job: DeployApi
+    steps:
+    
+    - task: AzureAppServiceManage@0
+      inputs:
+        azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
+        Action: 'Stop Azure App Service'
+        WebAppName: 'ClassicGuildBank-api'
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
+        appType: 'webApp'
+        WebAppName: 'ClassicGuildBank-api'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/_ClassicGuildBank/drop/ClassicGuildBankApi'
+    - task: AzureAppServiceManage@0
+      inputs:
+        azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
+        Action: 'Start Azure App Service'
+        WebAppName: 'ClassicGuildBank-api'
