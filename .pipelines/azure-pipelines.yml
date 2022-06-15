@@ -165,11 +165,9 @@ stages:
         sourceFolder: '$(System.ArtifactsDirectory)/_ClassicGuildBank/dist/classic-guild-bank'
         globExpressions: '**'
     - script: |
-        export CLOUDFRONT_DISTRIBUTION="$(aws cloudfront list-distributions --query "DistributionList.Items[*].{id:Id,origin:Origins.Items[0].Id}[?origin=='s3-classicguildbank.thielking.dev'].id" --output text)"
-        echo $CLOUDFRONT_DISTRIBUTION
-        echo "##vso[task.setvariable variable=CLOUDFRONT_DISTRIBUTION;isoutput=true]$CLOUDFRONT_DISTRIBUTION"
+        export dist_id="$(aws cloudfront list-distributions --query "DistributionList.Items[*].{id:Id,origin:Origins.Items[0].Id}[?origin=='s3-classicguildbank.thielking.dev'].id" --output text)"
+        echo "##vso[task.setvariable variable=CLOUDFRONT_DISTRIBUTION]$dist_id"
       displayName: "Get Cloudfront Distribution"
-      name: GetCloudFrontDistribution
       env:
         AWS_SECRET_ACCESS_KEY: $(AwsSecretAccessKey)
         AWS_ACCESS_KEY: $(AwsAccessKey)
@@ -179,4 +177,4 @@ stages:
         regionName: 'us-east-1'
         awsCommand: 'cloudfront'
         awsSubCommand: 'create-invalidation'
-        awsArguments: '--distribution $(GetCloudFrontDistribution.CLOUDFRONT_DISTRIBUTION)'
+        awsArguments: '--distribution $(CLOUDFRONT_DISTRIBUTION)'
