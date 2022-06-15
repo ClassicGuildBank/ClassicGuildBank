@@ -177,7 +177,7 @@ stages:
       displayName: "Get Cloudfront Distribution"
       env:
         AWS_SECRET_ACCESS_KEY: $(AwsSecretAccessKey)
-        AWS_ACCESS_KEY: $(AwsAccessKey)
+        AWS_ACCESS_KEY_ID: $(AwsAccessKey)
     - task: AWSCLI@1
       inputs:
         awsCredentials: 'aws-501software'
