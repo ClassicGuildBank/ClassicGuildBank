@@ -114,11 +114,13 @@ stages:
         artifactName: 'drop'
         downloadPath: '$(System.ArtifactsDirectory)/_ClassicGuildBank'
     - task: AzureAppServiceManage@0
+      displayName: "Stop App Service"
       inputs:
         azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
         Action: 'Stop Azure App Service'
         WebAppName: 'ClassicGuildBank-api'
     - task: AzureRmWebAppDeployment@4
+      displayName: "App Svc Deploy"
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
@@ -126,7 +128,18 @@ stages:
         WebAppName: 'ClassicGuildBank-api'
         packageForLinux: '$(System.ArtifactsDirectory)/_ClassicGuildBank/drop/ClassicGuildBankApi'
     - task: AzureAppServiceManage@0
+      displayName: "Start App Service"
       inputs:
         azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
         Action: 'Start Azure App Service'
         WebAppName: 'ClassicGuildBank-api'
+  - job: DeployClient
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+        architecture: 'x64'
+    - script: python -m pip install awscli
+      displayName: "Download AWS Cli"
+    
