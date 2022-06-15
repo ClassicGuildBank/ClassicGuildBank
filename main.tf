@@ -4,6 +4,11 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.0.2"
     }
+
+    aws = {
+      source = "hashicorp/aws"
+      version = "~> 3.0"
+    }
   }
 
   backend "azurerm" {
@@ -16,6 +21,11 @@ terraform {
 provider "azurerm" {
   features {}
 }
+
+provider "aws" {
+  region = "us-east-1"
+}
+
 
 locals {
   resource_group_location = var.resource_group_location
@@ -117,71 +127,166 @@ resource "azurerm_windows_web_app" "app_svc" {
   }
 }
 
-# Create a storage account for the static website
-resource "azurerm_storage_account" "storage" {
-  name                     = lower("${azurerm_resource_group.rg.name}storage")
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  account_kind             = "StorageV2"
-  account_tier             = "Standard"
-  account_replication_type = "GRS"
+# ------------------------------------------------------------------------------
+# DEPLOY STATIC WEBSITE AWS
+# ------------------------------------------------------------------------------
 
-  static_website {
-    index_document     = "index.html"
-    error_404_document = "index.html"
+resource "aws_s3_bucket" "b" {
+  bucket = local.dns_name
+}
+
+resource "aws_s3_bucket_website_configuration" "bucket" {
+  bucket = aws_s3_bucket.b.id
+  index_document {
+    suffix = "index.html"
+  }
+  error_document {
+    key = "index.html"
   }
 }
 
-# Setup the CDN Profile and Endpoint to point to the storage account
-resource "azurerm_cdn_profile" "cdnp" {
-  name                = "${azurerm_resource_group.rg.name}-cdnp"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  sku                 = "Standard_Microsoft"
+resource "aws_s3_bucket_public_access_block" "b" {
+    bucket = aws_s3_bucket_website_configuration.bucket.id
+
+    block_public_policy = false
+    block_public_acls = true
+    ignore_public_acls = true
 }
 
-# CDN Endpoint points to storage container with SPA Deployed to it
-resource "azurerm_cdn_endpoint" "cdne" {
-  name                = "${azurerm_resource_group.rg.name}-cdne"
-  profile_name        = azurerm_cdn_profile.cdnp.name
-  location            = azurerm_cdn_profile.cdnp.location
-  resource_group_name = azurerm_resource_group.rg.name
+data "aws_iam_policy_document" "policy" {
+  statement {
+    sid = "1"
+    actions = [
+      "s3:GetObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.b.arn}/*"
+    ]
+    principals {
+      type = "*"
+      identifiers = ["*"]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket_website_configuration.bucket.id
+  policy = data.aws_iam_policy_document.policy.json
+}
+
+data "aws_acm_certificate" "cert" {
+  domain = "*.thielking.dev"
+  statuses = ["ISSUED"]
+}
+
+resource "aws_cloudfront_distribution" "s3_distribution" {
+  aliases = [local.dns_name]
 
   origin {
-    name      = azurerm_storage_account.storage.name
-    host_name = azurerm_storage_account.storage.primary_web_host
+    domain_name = "${aws_s3_bucket.b.bucket_regional_domain_name}"
+    origin_id = "s3-${local.dns_name}"
   }
+
+  default_cache_behavior {
+    allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods = ["GET", "HEAD"]
+    target_origin_id = "s3-${local.dns_name}"
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl = 0
+    default_ttl = 86400
+    max_ttl = 31536000
+    
+    forwarded_values {
+      query_string = false
+
+      cookies {
+          forward = "none"
+      }
+    }
+  }
+
+  viewer_certificate {
+    acm_certificate_arn = data.aws_acm_certificate.cert.arn
+    ssl_support_method = "sni-only"
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  default_root_object = "index.html"
+  price_class = "PriceClass_200"
+  enabled = true
+  is_ipv6_enabled = true
 }
 
-# Import existing DNS Zone as Data.  This is not managed by this terraform deployment
-data "azurerm_dns_zone" "dns" {
-  name                = "thielking.dev"
-  resource_group_name = "TerraformPrereqs"
-}
+# Create a storage account for the static website
+# resource "azurerm_storage_account" "storage" {
+#   name                     = lower("${azurerm_resource_group.rg.name}storage")
+#   resource_group_name      = azurerm_resource_group.rg.name
+#   location                 = azurerm_resource_group.rg.location
+#   account_kind             = "StorageV2"
+#   account_tier             = "Standard"
+#   account_replication_type = "GRS"
 
-# Create a DNS record to point to our CDN Enpoint
-resource "azurerm_dns_cname_record" "cname" {
-  name                = lower(azurerm_resource_group.rg.name)
-  zone_name           = data.azurerm_dns_zone.dns.name
-  resource_group_name = data.azurerm_dns_zone.dns.resource_group_name
-  ttl                 = 3600
-  target_resource_id  = azurerm_cdn_endpoint.cdne.id
-}
+#   static_website {
+#     index_document     = "index.html"
+#     error_404_document = "index.html"
+#   }
+# }
+
+# # Setup the CDN Profile and Endpoint to point to the storage account
+# resource "azurerm_cdn_profile" "cdnp" {
+#   name                = "${azurerm_resource_group.rg.name}-cdnp"
+#   location            = azurerm_resource_group.rg.location
+#   resource_group_name = azurerm_resource_group.rg.name
+#   sku                 = "Standard_Microsoft"
+# }
+
+# # CDN Endpoint points to storage container with SPA Deployed to it
+# resource "azurerm_cdn_endpoint" "cdne" {
+#   name                = "${azurerm_resource_group.rg.name}-cdne"
+#   profile_name        = azurerm_cdn_profile.cdnp.name
+#   location            = azurerm_cdn_profile.cdnp.location
+#   resource_group_name = azurerm_resource_group.rg.name
+
+#   origin {
+#     name      = azurerm_storage_account.storage.name
+#     host_name = azurerm_storage_account.storage.primary_web_host
+#   }
+# }
+
+# # Import existing DNS Zone as Data.  This is not managed by this terraform deployment
+# data "azurerm_dns_zone" "dns" {
+#   name                = "thielking.dev"
+#   resource_group_name = "TerraformPrereqs"
+# }
+
+# # Create a DNS record to point to our CDN Enpoint
+# resource "azurerm_dns_cname_record" "cname" {
+#   name                = lower(azurerm_resource_group.rg.name)
+#   zone_name           = data.azurerm_dns_zone.dns.name
+#   resource_group_name = data.azurerm_dns_zone.dns.resource_group_name
+#   ttl                 = 3600
+#   target_resource_id  = azurerm_cdn_endpoint.cdne.id
+# }
 
 # Add our custom domain to the CDN Enpoint
-resource "azurerm_cdn_endpoint_custom_domain" "domain" {
-  name            = lower(azurerm_resource_group.rg.name)
-  cdn_endpoint_id = azurerm_cdn_endpoint.cdne.id
-  host_name       = "${lower(azurerm_resource_group.rg.name)}.${data.azurerm_dns_zone.dns.name}"
+# resource "azurerm_cdn_endpoint_custom_domain" "domain" {
+#   name            = lower(azurerm_resource_group.rg.name)
+#   cdn_endpoint_id = azurerm_cdn_endpoint.cdne.id
+#   host_name       = "${lower(azurerm_resource_group.rg.name)}.${data.azurerm_dns_zone.dns.name}"
 
-  # Terraform was requiring a field which was only applicable to user managed certificates
-  # Instead of using Terraform we can use a provisioner to execute an Azure CLI command
-  # after the resource has been provisioned to modify attributes on it such as enable HTTPS
-  provisioner "local-exec" {
-	command = "az cdn custom-domain enable-https --resource-group ${azurerm_resource_group.rg.name} --name ${lower(azurerm_resource_group.rg.name)} --endpoint-name ${azurerm_cdn_endpoint.cdne.name} --profile ${azurerm_cdn_profile.cdnp.name}"
-  }
+#   # Terraform was requiring a field which was only applicable to user managed certificates
+#   # Instead of using Terraform we can use a provisioner to execute an Azure CLI command
+#   # after the resource has been provisioned to modify attributes on it such as enable HTTPS
+#   provisioner "local-exec" {
+# 	command = "az cdn custom-domain enable-https --resource-group ${azurerm_resource_group.rg.name} --name ${lower(azurerm_resource_group.rg.name)} --endpoint-name ${azurerm_cdn_endpoint.cdne.name} --profile ${azurerm_cdn_profile.cdnp.name}"
+#   }
 
-  depends_on = [
-	azurerm_dns_cname_record.cname,
-  ]
-}
+#   # depends_on = [
+# 	# azurerm_dns_cname_record.cname,
+#   # ]
+# }
