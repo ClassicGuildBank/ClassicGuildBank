@@ -99,7 +99,7 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: "Publish Client Artifacts"
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)/classic-guild-bank/dist'
+        PathtoPublish: '$(System.DefaultWorkingDirectory)/classic-guild-bank/dist'
         ArtifactName: 'dist'
         publishLocation: 'Container'
 - stage: Deploy
