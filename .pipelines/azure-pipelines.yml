@@ -112,7 +112,7 @@ stages:
         buildType: 'current'
         downloadType: 'single'
         artifactName: 'drop'
-        downloadPath: '$(System.ArtifactsDirectory)'
+        downloadPath: '$(System.ArtifactsDirectory)/_ClassicGuildBank'
     - task: AzureAppServiceManage@0
       inputs:
         azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
