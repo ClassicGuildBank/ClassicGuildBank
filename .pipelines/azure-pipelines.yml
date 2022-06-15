@@ -184,4 +184,4 @@ stages:
         regionName: 'us-east-1'
         awsCommand: 'cloudfront'
         awsSubCommand: 'create-invalidation'
-        awsArguments: '--distribution $(CLOUDFRONT_DISTRIBUTION)'
+        awsArguments: '--distribution-id $(CLOUDFRONT_DISTRIBUTION) --paths "/*"'
