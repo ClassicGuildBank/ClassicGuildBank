@@ -1,5 +1,6 @@
 ﻿using ClassicGuildBankData.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,8 +37,7 @@ namespace ClassicGuildBankData.Data
 
         public async Task Seed()
         {
-            _dbContext.Database.EnsureCreated();
-
+            _dbContext.Database.Migrate();
 
             await SeedUsers(); 
             await SeedData();

@@ -6,7 +6,7 @@ terraform {
     }
 
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 3.0"
     }
   }
@@ -39,6 +39,10 @@ locals {
     }
   ]
 }
+
+# ------------------------------------------------------------------------------
+# Deploy API and DB to Azure
+# ------------------------------------------------------------------------------
 
 # Create the resource group to hold everything
 resource "azurerm_resource_group" "rg" {
@@ -146,11 +150,11 @@ resource "aws_s3_bucket_website_configuration" "bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "b" {
-    bucket = aws_s3_bucket_website_configuration.bucket.id
+  bucket = aws_s3_bucket_website_configuration.bucket.id
 
-    block_public_policy = false
-    block_public_acls = true
-    ignore_public_acls = true
+  block_public_policy = false
+  block_public_acls   = true
+  ignore_public_acls  = true
 }
 
 data "aws_iam_policy_document" "policy" {
@@ -163,7 +167,7 @@ data "aws_iam_policy_document" "policy" {
       "${aws_s3_bucket.b.arn}/*"
     ]
     principals {
-      type = "*"
+      type        = "*"
       identifiers = ["*"]
     }
   }
@@ -175,7 +179,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 data "aws_acm_certificate" "cert" {
-  domain = "*.thielking.dev"
+  domain   = "*.thielking.dev"
   statuses = ["ISSUED"]
 }
 
@@ -183,31 +187,31 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   aliases = [local.dns_name]
 
   origin {
-    domain_name = "${aws_s3_bucket.b.bucket_regional_domain_name}"
-    origin_id = "s3-${local.dns_name}"
+    domain_name = aws_s3_bucket.b.bucket_regional_domain_name
+    origin_id   = "s3-${local.dns_name}"
   }
 
   default_cache_behavior {
-    allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods = ["GET", "HEAD"]
-    target_origin_id = "s3-${local.dns_name}"
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "s3-${local.dns_name}"
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl = 0
-    default_ttl = 86400
-    max_ttl = 31536000
-    
+    min_ttl                = 0
+    default_ttl            = 86400
+    max_ttl                = 31536000
+
     forwarded_values {
       query_string = false
 
       cookies {
-          forward = "none"
+        forward = "none"
       }
     }
   }
 
   viewer_certificate {
     acm_certificate_arn = data.aws_acm_certificate.cert.arn
-    ssl_support_method = "sni-only"
+    ssl_support_method  = "sni-only"
   }
 
   restrictions {
@@ -217,76 +221,28 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   default_root_object = "index.html"
-  price_class = "PriceClass_200"
-  enabled = true
-  is_ipv6_enabled = true
+  price_class         = "PriceClass_200"
+  enabled             = true
+  is_ipv6_enabled     = true
 }
 
-# Create a storage account for the static website
-# resource "azurerm_storage_account" "storage" {
-#   name                     = lower("${azurerm_resource_group.rg.name}storage")
-#   resource_group_name      = azurerm_resource_group.rg.name
-#   location                 = azurerm_resource_group.rg.location
-#   account_kind             = "StorageV2"
-#   account_tier             = "Standard"
-#   account_replication_type = "GRS"
 
-#   static_website {
-#     index_document     = "index.html"
-#     error_404_document = "index.html"
-#   }
-# }
+# ------------------------------------------------------------------------------
+# Create DNS Entries to point domain to cloudfront
+# ------------------------------------------------------------------------------
 
-# # Setup the CDN Profile and Endpoint to point to the storage account
-# resource "azurerm_cdn_profile" "cdnp" {
-#   name                = "${azurerm_resource_group.rg.name}-cdnp"
-#   location            = azurerm_resource_group.rg.location
-#   resource_group_name = azurerm_resource_group.rg.name
-#   sku                 = "Standard_Microsoft"
-# }
+# Import existing DNS Zone as Data.  This is not managed by this terraform deployment
+data "azurerm_dns_zone" "dns" {
+  name                = "thielking.dev"
+  resource_group_name = "TerraformPrereqs"
+}
 
-# # CDN Endpoint points to storage container with SPA Deployed to it
-# resource "azurerm_cdn_endpoint" "cdne" {
-#   name                = "${azurerm_resource_group.rg.name}-cdne"
-#   profile_name        = azurerm_cdn_profile.cdnp.name
-#   location            = azurerm_cdn_profile.cdnp.location
-#   resource_group_name = azurerm_resource_group.rg.name
+# Create a DNS record to point to our CDN Enpoint
+resource "azurerm_dns_cname_record" "cname" {
+  name                = lower(azurerm_resource_group.rg.name)
+  zone_name           = data.azurerm_dns_zone.dns.name
+  resource_group_name = data.azurerm_dns_zone.dns.resource_group_name
+  ttl                 = 3600
+  record              = aws_cloudfront_distribution.s3_distribution.domain_name
+}
 
-#   origin {
-#     name      = azurerm_storage_account.storage.name
-#     host_name = azurerm_storage_account.storage.primary_web_host
-#   }
-# }
-
-# # Import existing DNS Zone as Data.  This is not managed by this terraform deployment
-# data "azurerm_dns_zone" "dns" {
-#   name                = "thielking.dev"
-#   resource_group_name = "TerraformPrereqs"
-# }
-
-# # Create a DNS record to point to our CDN Enpoint
-# resource "azurerm_dns_cname_record" "cname" {
-#   name                = lower(azurerm_resource_group.rg.name)
-#   zone_name           = data.azurerm_dns_zone.dns.name
-#   resource_group_name = data.azurerm_dns_zone.dns.resource_group_name
-#   ttl                 = 3600
-#   target_resource_id  = azurerm_cdn_endpoint.cdne.id
-# }
-
-# Add our custom domain to the CDN Enpoint
-# resource "azurerm_cdn_endpoint_custom_domain" "domain" {
-#   name            = lower(azurerm_resource_group.rg.name)
-#   cdn_endpoint_id = azurerm_cdn_endpoint.cdne.id
-#   host_name       = "${lower(azurerm_resource_group.rg.name)}.${data.azurerm_dns_zone.dns.name}"
-
-#   # Terraform was requiring a field which was only applicable to user managed certificates
-#   # Instead of using Terraform we can use a provisioner to execute an Azure CLI command
-#   # after the resource has been provisioned to modify attributes on it such as enable HTTPS
-#   provisioner "local-exec" {
-# 	command = "az cdn custom-domain enable-https --resource-group ${azurerm_resource_group.rg.name} --name ${lower(azurerm_resource_group.rg.name)} --endpoint-name ${azurerm_cdn_endpoint.cdne.name} --profile ${azurerm_cdn_profile.cdnp.name}"
-#   }
-
-#   # depends_on = [
-# 	# azurerm_dns_cname_record.cname,
-#   # ]
-# }
