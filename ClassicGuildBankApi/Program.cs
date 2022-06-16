@@ -22,8 +22,7 @@ namespace SSIndustrialApi
 
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-            if (environment == EnvironmentName.Development)
-                SeedDatabase(host);
+            SeedDatabase(host);
 
             host.Run();
         }
@@ -49,19 +48,19 @@ namespace SSIndustrialApi
 
         private static void SeedDatabase(IWebHost host)
         {
-            //using (var scope = host.Services.CreateScope())
-            //{
-            //    try
-            //    {
-            //        var seeder = scope.ServiceProvider.GetService<ClassicGuildBankSeeder>();
-            //        seeder.Seed().Wait();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-            //        logger.LogError(ex, "An error occurred seeding the DB.");
-            //    }
-            //}
+            using (var scope = host.Services.CreateScope())
+            {
+                try
+                {
+                    var seeder = scope.ServiceProvider.GetService<ClassicGuildBankSeeder>();
+                    seeder.Seed().GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred seeding the DB.");
+                }
+            }
         }
 
         #endregion
