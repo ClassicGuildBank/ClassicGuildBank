@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +41,8 @@ namespace ClassicGuildBankData.Data
         {
             _dbContext.Database.Migrate();
 
-            await SeedUsers(); 
+            await SeedUsers();
+            await SeedItems();
             await SeedData();
         }
 
@@ -49,13 +52,14 @@ namespace ClassicGuildBankData.Data
 
         private async Task SeedUsers()
         {
-            var user = await _userManager.FindByNameAsync("Skorppio");
+            var user = await _userManager.FindByNameAsync("athielking");
             if (user == null)
             {
                 user = new ClassicGuildBankUser()
                 {
-                    UserName = "Skorppio",
-                    Email = "athielking@501software.com"
+                    UserName = "athielking",
+                    Email = "athielking@gmail.com",
+                    EmailConfirmed = true
                 };
 
                 var result = await _userManager.CreateAsync(user, "P@ssw0rd!");
@@ -64,31 +68,15 @@ namespace ClassicGuildBankData.Data
                 {
                     throw new InvalidOperationException("Failed to create default user");
                 }
-            }
-
-            user = await _userManager.FindByNameAsync("Rumjugs");
-            if (user == null)
-            {
-                user = new ClassicGuildBankUser()
-                {
-                    UserName = "Rumjugs",
-                    Email = "culhamda@gmail.com"
-                };
-
-                var result = await _userManager.CreateAsync(user, "P@ssw0rd!");
-
-                if (result != IdentityResult.Success)
-                {
-                    throw new InvalidOperationException("Failed to create default user");
-                }
-            }
+            }            
         }
 
         private async Task SeedData()
         {
             if (!_dbContext.Guilds.Any(g => g.Id == new Guid(fg1Id)))
             {
-                var fakeGuild = GetFakeGuild1();
+                var user = await _userManager.FindByNameAsync("athielking");
+                var fakeGuild = GetFakeGuild1(user.Id);
                 _dbContext.Guilds.Add(fakeGuild);
                 await _dbContext.SaveChangesAsync();
             }
@@ -96,13 +84,13 @@ namespace ClassicGuildBankData.Data
         }
 
         private static string fg1Id = "72D8FD17-9D7B-47E3-882E-E81CD8FB91D0";
-        public Guild GetFakeGuild1()
+        public Guild GetFakeGuild1(string userId)
         {
             return new Guild
             {
                 Id = new Guid(fg1Id),
                 Name = "Loch Modan Yacht Club",
-                UserId = "1fd88486-4c11-4980-98f0-5f0821424ed3", //Skorppio
+                UserId = userId, //athielking
                 Characters = new List<Character>
                 {
                     GetFakeCharacter1()
@@ -112,8 +100,8 @@ namespace ClassicGuildBankData.Data
                     new GuildMember {
                         
                         _GuildId = fg1Id,
-                        DisplayName = "skorppio",
-                        UserId = "1fd88486-4c11-4980-98f0-5f0821424ed3",
+                        DisplayName = "athielking",
+                        UserId = userId,
                     }
                 }
             };
@@ -177,7 +165,7 @@ namespace ClassicGuildBankData.Data
             return new Character
             {
                 _Id = fc1Id,
-                Name = "Skorppio",
+                Name = "athielking",
                 _GuildId = fg1Id,
                 Bags = new List<Bag>
                 {
@@ -186,6 +174,24 @@ namespace ClassicGuildBankData.Data
                     bb1
                 }
             };
+        }
+
+        private async Task SeedItems()
+        {
+            var itemCount = await _dbContext.Items.CountAsync();
+            if (itemCount > 0)
+                return;
+
+
+            var sqlText = File.ReadAllText($"{AppContext.BaseDirectory}/SQL/seed_items.sql");
+            var connection = (SqlConnection)_dbContext.Database.GetDbConnection();
+            connection.Open();
+
+            using (var cmd = new SqlCommand(sqlText, connection))
+            {
+                cmd.CommandTimeout = 300;
+                cmd.ExecuteNonQuery();
+            }
         }
         #endregion
     }
