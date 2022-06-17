@@ -137,7 +137,7 @@ resource "azurerm_windows_web_app" "app_svc" {
 
 resource "aws_s3_bucket" "b" {
   bucket = local.dns_name
-  force_destroy = 
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_website_configuration" "bucket" {
