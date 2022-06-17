@@ -94,7 +94,7 @@ resource "azurerm_service_plan" "app_sp" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Windows"
-  sku_name            = "F1"
+  sku_name            = "D1"
 }
 
 # Create the Azure Web App
@@ -137,7 +137,7 @@ resource "azurerm_windows_web_app" "app_svc" {
 
 resource "aws_s3_bucket" "b" {
   bucket = local.dns_name
-  force_destroy = true
+  force_destroy = 
 }
 
 resource "aws_s3_bucket_website_configuration" "bucket" {
