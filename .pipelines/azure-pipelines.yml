@@ -11,6 +11,7 @@ pool:
 
 stages:
 - stage: Infrastructure
+  condition: ne(variables['Build.Reason'], 'PullRequest')
   jobs:
   - job: Terraform
     steps:
@@ -84,6 +85,7 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
   - job: BuildClient
+    dependsOn: []
     steps:
     - task: Npm@1
       displayName: "npm install"
@@ -103,6 +105,7 @@ stages:
         ArtifactName: 'dist'
         publishLocation: 'Container'
 - stage: Deploy
+  condition: ne(variables['Build.Reason'], 'PullRequest')
   dependsOn: Build
   jobs:
   - job: DeployApi
@@ -135,7 +138,8 @@ stages:
         Action: 'Start Azure App Service'
         WebAppName: 'ClassicGuildBank-api'
   - job: DeployClient
-    steps:
+    dependsOn: []
+    steps:    
     - task: AzureKeyVault@2
       inputs:
         azureSubscription: 'Pay-As-You-Go(49c5473a-4747-494e-8cfd-1c6671b3b175)'
