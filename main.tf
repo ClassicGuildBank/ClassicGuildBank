@@ -180,7 +180,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
 }
 
 data "aws_acm_certificate" "cert" {
-  domain   = "thielking.dev"
+  domain   = "*.thielking.dev"
   statuses = ["ISSUED"]
 }
 
